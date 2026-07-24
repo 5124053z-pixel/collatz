@@ -19,6 +19,8 @@ LICENSE                                 MIT
 collatz_block_repeat.py                 main demo, single block
 big_survey.py                           105-block systematic sweep
 exact_power_test.py                     isolates the "exact 2^L" condition
+random_m_test.py                        §5a: tests whether self-similarity of
+                                         N_k is even necessary (it isn't)
 cycle_search.c                          unrelated side-quest: exhaustive
                                          search for non-trivial Collatz cycles
                                          via parity-vector fixed points (GMP,
@@ -128,6 +130,60 @@ causes deviation from `diff_k = L` for generic blocks.
   there other unrelated algebraic identities that also produce it?
 - Does the phenomenon generalize to bases other than 2^L (i.e. repeating a
   block in base `b` for other `b`), or to other `an+b` Collatz-like maps?
+- **(see §5a)** Is the self-similar block-repeat construction even necessary
+  for the effect, or is something much more general going on?
+
+## 5a. Generalization: the self-similarity turns out not to matter
+
+A follow-up experiment shows the phenomenon has **nothing to do with the
+self-similar repunit-like construction of `N_k`**. Fix any odd `x` (bit
+length `L`) and take a *uniformly random* large integer `m` (not built from
+`x` at all). Then:
+
+```
+diff = steps(2^L * m + x) - steps(m)
+```
+
+still has **`L` as its single most frequent value**, and this mode sharpens
+(the frequency of `diff = L` increases) as the bit length of `m` grows — see
+`random_m_test.py`. Sample results (200 random trials each):
+
+| x (bit length L) | m bit length | freq(diff = L) |
+|---|---|---|
+| alternating, L=12 | 100 | 75.0% |
+| alternating, L=12 | 500 | 89.0% |
+| random, L=12 | 100 | 32.5% |
+| random, L=12 | 500 | 59.0% |
+| all-ones, L=12 | 100 | 18.0% |
+| all-ones, L=12 | 500 | 53.5% |
+
+Since `steps(2^L·m) = L + steps(m)` **exactly and trivially** (multiplying
+by `2^L` just prepends `L` guaranteed halving steps before the trajectory of
+`m` continues unchanged), this reduces the whole phenomenon to a cleaner
+question:
+
+> For a fixed small offset `x` and a large "clean" (`2^L`-divisible) number
+> `2^L·m`, why does adding `x` leave the **total stopping time unchanged**
+> more often than any other specific outcome?
+
+**Connection to a known (but apparently unproven) fact.** The case `L=1,
+x=1` is *exactly* the classical, previously-documented observation that
+`steps(n)` and `steps(n+1)` coincide roughly half the time (OEIS A006577,
+comment: "It seems that about half of the terms satisfy a(i) = a(i+1)"; up
+to 10,000,000, 4,964,705 of the terms satisfy this). Concretely: `2m` and
+`2m+1` are literally consecutive integers, and `steps(2m) = 1 + steps(m)`
+trivially, so "`diff = L = 1`" here is precisely "`steps(2m) = steps(2m+1)`",
+i.e. a same-total-stopping-time pair of neighbors — verified directly in
+`random_m_test.py`.
+
+So the family of questions here — parameterized by `(L, x)` instead of just
+"distance 1" — appears to be a genuine generalization of that classical,
+apparently-still-unproven ~50% phenomenon. I could not find an existing
+rigorous proof or heuristic derivation of even the base `L=1` case in the
+literature searched. (Terras's theorem characterizes the *ordinary* stopping
+time — first drop below the starting value — by finite congruence classes,
+but *total* stopping time is not known to reduce to finite congruence data,
+which is presumably why this is hard.)
 
 ## 6. Relation to existing theory
 
@@ -152,6 +208,7 @@ see `cycle_search.c`).
 python3 collatz_block_repeat.py      # main phenomenon, single block
 python3 big_survey.py                 # 105-block systematic sweep
 python3 exact_power_test.py           # isolates the "exact 2^L" condition
+python3 random_m_test.py              # §5a: self-similarity isn't necessary
 ```
 
 No external dependencies beyond CPython 3.8+.
