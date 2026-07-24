@@ -11,6 +11,23 @@ This is **not** a claim about the Collatz conjecture itself (true/false, cycles,
 divergent trajectories). It is a concrete, checkable statement about a specific
 family of numbers built from self-similar bit patterns.
 
+## Repository contents
+
+```
+README.md                              this document
+LICENSE                                 MIT
+collatz_block_repeat.py                 main demo, single block
+big_survey.py                           105-block systematic sweep
+exact_power_test.py                     isolates the "exact 2^L" condition
+cycle_search.c                          unrelated side-quest: exhaustive
+                                         search for non-trivial Collatz cycles
+                                         via parity-vector fixed points (GMP,
+                                         OpenMP) — negative result up to q=20,
+                                         kept for reference / reuse
+results/single_block_10251997.csv       raw diff_k data for x=10251997, k=2..300
+results/survey_105_blocks.csv           raw results of the 105-block sweep (§2)
+```
+
 ---
 
 ## 1. Construction
