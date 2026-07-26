@@ -52,12 +52,18 @@ hypothesis2_test.py                     correlates merge time against n's own
                                          trajectory length and 2-adic/run-
                                          length features
 
-Follow-up (§10, after the Addendum tooling above was found to be lost):
+Follow-up (§10-12, after the Addendum tooling above was found to be lost):
 k_cluster_analysis.py                   independent re-derivation of §6's
                                          K-distribution; finds a false-
                                          positive risk in minimal-K search
                                          and resolves the §4-connection
                                          question (negatively)
+quantile_scaling_analysis.py            independent re-derivation of §5's
+                                         quantile power-law scaling
+coupling_exhaustive_verify.py           independent re-derivation of §2's
+                                         exhaustive early-merge check;
+                                         reproduces the original table
+                                         exactly and extends past it
 ```
 
 ## 1. Construction
@@ -434,6 +440,49 @@ Partial correlation of `steps(n)/bits` against `log(tau_couple)`, controlling fo
 **The §4-connection question, resolved negatively (beyond the trivial cases).** For each fast-merging residue r found above, checking how many steps r's own trajectory takes to first hit a power of two: the two smallest classes, r=4 (K=3) and r=2 (K=4), hit a power of two in 0 steps — trivially, since 4 and 2 already *are* powers of two. r=5 (K=5) reaches 2^4 in 1 step, consistent with the §4 "exact 2^L" family (5 = `101`₂ is itself an alternating-block number). But every larger-K class checked (r=14, 22, 49, 65, 99, ...) takes 11–23 steps to reach any power of two — no faster or cleaner than a generic number. So the K-clustering is **not** generally explained by §4's mechanism: only the smallest 1–2 classes coincide with it, apparently because the smallest possible residues are close to powers of two by sheer smallness, not because of the §4 mechanism itself. This is consistent with, and sharpens, Addendum §7's separate finding that global trajectory simplicity doesn't predict merge speed — here we see directly that it doesn't explain the K-clustering either.
 
 See `k_cluster_analysis.py` for the full script (self-contained, pure Python, run: `python k_cluster_analysis.py`).
+
+## 11. Follow-up: independent re-verification of the quantile-scaling mixture model (§5)
+
+Addendum §5's claim — that `tau_couple`'s quantiles scale as power laws in bit length, with the exponent rising smoothly from ~0 at p10 to ~1 at p99 — is another claim whose original tooling (`coupling_scaling.c`, `fit_gamma.py`) was lost (§10). Re-derived from scratch in pure Python (`quantile_scaling_analysis.py`), sampling 400 random n per bit-length window across 64–4096 bits (a narrower range than the original's 32–65536 bits, since this uses plain Python big-int simulation rather than GMP/OpenMP, but wide enough — a factor of 64 — to see the trend):
+
+| bits | p10 | p50 | p90 | p99 | max | agreement rate |
+|---|---|---|---|---|---|---|
+| 64 | 3 | 13 | 181 | 369 | 453 | 63.0% |
+| 128 | 3 | 14 | 502 | 774 | 894 | 69.0% |
+| 256 | 3 | 18 | 678 | 1396 | 1808 | 76.2% |
+| 512 | 3 | 30 | 1657 | 3319 | 3773 | 80.8% |
+| 1024 | 3 | 60 | 2723 | 6479 | 6928 | 87.2% |
+| 2048 | 3 | 58 | 4982 | 13065 | 14835 | 88.5% |
+| 4096 | 3 | 79 | 6438 | 25712 | 29626 | 92.2% |
+
+Power-law exponents (quantile ~ bits^alpha) from log-log regression, compared to the original (lost-code) values:
+
+| quantile | this re-run (alpha, R²) | original Addendum §5 |
+|---|---|---|
+| p10 | **0.000**, exactly flat (literally 3 at every window tested — even flatter than originally reported) | 0.058 |
+| p50 | 0.487, R²=0.944 | 0.384 |
+| p90 | 0.860, R²=0.979 | 0.661 |
+| p99 | 1.026, R²=0.999 | 0.935 |
+
+The exponents are not numerically identical to the original run (expected: this samples a 64x bit-length range vs. the original's 2048x range, and only 400 samples/window vs. presumably more), but the **qualitative structure is fully reproduced independently**: p10 is exactly bits-independent (here, literally constant at 3 — the n≡4 (mod 8) mechanism from §5b, its minimum possible value), and the exponent rises monotonically through p50 and p90 to essentially linear (alpha≈1) at p99. This is strong independent support for the two-component mixture picture — an O(1) fast bulk plus a heavy tail scaling roughly linearly in bit length — even without the original code surviving.
+
+See `quantile_scaling_analysis.py` (self-contained, pure Python, run: `python quantile_scaling_analysis.py`).
+
+## 12. Follow-up: independent re-verification of the exhaustive §2 claim
+
+Unlike §5b–§5d, the Addendum's §2 exhaustive table (N=1e6/5e6/15e6/60e6, 100.0000% early-merge, 0 exceptions) had **no surviving verification code at all** — `coupling_experiment3/4/5.py` were never saved to disk (§10). Reconstructed from scratch (`coupling_exhaustive_verify.py`, memoized total-stopping-time cache) and re-run at every N from the original table, plus an extension beyond it:
+
+| N | agreeing pairs (this re-run) | agreeing pairs (original) | early-merge | exceptions | wall time |
+|---|---|---|---|---|---|
+| 1,000,000 | 477,245 | 477,245 | 100.0000% | 0 | 2.0s |
+| 5,000,000 | 2,454,559 | 2,454,559 | 100.0000% | 0 | 11.6s |
+| 15,000,000 | 7,492,334 | 7,492,334 | 100.0000% | 0 | 36.5s |
+| 60,000,000 | 30,547,761 | 30,547,761 | 100.0000% | 0 | 2m27s |
+| 100,000,000 | 51,242,281 | *(new — extends past the original's largest tested N)* | 100.0000% | 0 | 4m20s |
+
+Every single agreeing-pair count from the original (lost-code) table matches **exactly**, digit for digit, and the zero-exceptions / 100.0000% early-merge result reproduces cleanly at every scale, including the new N=100,000,000 point which goes beyond anything in the original table. This closes the biggest provenance gap left by the lost tooling: §2's central claim is no longer resting on unreproducible code, and now has independent exhaustive verification to a new high-water mark of N=10^8.
+
+See `coupling_exhaustive_verify.py` (self-contained, pure Python, memoized; run: `python coupling_exhaustive_verify.py <N>`).
 
 ## Acknowledgments (Addendum)
 
