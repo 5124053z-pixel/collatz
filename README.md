@@ -6,7 +6,7 @@ Status: amateur/independent investigation, computationally verified, not peer-re
 
 This is not a claim about the Collatz conjecture itself (true/false, cycles, divergent trajectories). It is a set of concrete, checkable statements about specific number families and about the statistics of the total stopping time function.
 
-**This file is a short summary.** The full investigation — every table, the coupling-theory Addendum, the honest record of mistakes made and corrected along the way, and the newest power-of-3 generalization — is in **[README_extra.md](README_extra.md)**, organized into 18 sections + Addendum. This file exists so a new reader isn't faced with 500+ lines up front.
+**This file is a short summary.** The full investigation — every table, the coupling-theory Addendum, the honest record of mistakes made and corrected along the way, and the newest power-of-3 generalization — is in **[README_extra.md](README_extra.md)**, organized into 19 sections + Addendum. This file exists so a new reader isn't faced with 500+ lines up front.
 
 ## Established results (with strength of evidence)
 
@@ -17,7 +17,7 @@ This is not a claim about the Collatz conjecture itself (true/false, cycles, div
 | 3 | Alternating blocks (`3(x/2)+1=2^L` exactly) give 100% exact convergence from k=1 | **Label corrected:** §4 proves only the identity `3(x/2)+1=2^L`, not that `diff=L` follows. §17 now proves `diff=L` for `m≡2 (mod 4)` (¼ of residues, every even L, one exception at m=2); the other ¾ remain empirical ([§4](README_extra.md#4-the-100-clean-family), [§17](README_extra.md#17-filling-the-gap-in-4-a-proof-that-the-alternating-family-actually-gives-diff--l)) |
 | 4 | Self-similarity of the construction isn't needed — same effect for `2^L·m+x`, any random `m` | ([§5a](README_extra.md#5a-generalization-the-self-similarity-turns-out-not-to-matter)) |
 | 5 | n≡4 (mod 8) provably merges with n+1 in exactly 3 steps; a slowly-growing family of such "merging classes" exists | Independently re-derived; **not new** — this is Garner (1985) / LaDue (2017) Corollary 5.1, see [§6](README_extra.md#6-relation-to-existing-theory) ([§5b](README_extra.md#5b-a-proved-partial-result-for-the-l1-base-case)) |
-| 6 | OEIS A006577's "~50%" is **not** a stable limit — raw agreement climbs to 98%+ by ~10⁵ digits | Sampled to n~10^27297 ([§5d](README_extra.md#5d-the-classical-50-is-not-the-limit--it-approaches-100)) |
+| 6 | OEIS A006577's "~50%" is **not** a stable limit — raw agreement climbs to 98%+ by ~10⁵ digits | Sampled to n~10^27297. **⚠ Priority unverified:** the "it increases" half may be in Gao (1993); paywalled, unchecked — see [§19](README_extra.md#19-cross-checking-5d-against-5b14-the-log-growth-law-provably-breaks-down) ([§5d](README_extra.md#5d-the-classical-50-is-not-the-limit--it-approaches-100)) |
 | 7 | Agreement of `steps(n)=steps(n+1)` is fully explained by literal early trajectory coalescence — zero exceptions found anywhere tested | Exhaustive to N=10⁸ (independently re-verified twice), sampled to 65536 bits ([Addendum §2](README_extra.md#2-result-early-merging-appears-to-fully-explain-agreement-at-every-scale-tested), [§12](README_extra.md#12-follow-up-independent-re-verification-of-the-exhaustive-2-claim)) |
 | 8 | The coupling time `tau_couple` is a two-component mixture: an O(1) fast bulk (small residue classes) + a heavy tail scaling ~linearly in bit length (p99 exponent ≈ 0.94) | Independently re-derived, matches original to 2-3 sig figs ([Addendum §5](README_extra.md#5-resolving-the-mismatch-the-distribution-is-a-two-component-mixture), [§11](README_extra.md#11-follow-up-independent-re-verification-of-the-quantile-scaling-mixture-model-5)) |
 | 9 | The phenomenon generalizes to `c=3^p` multipliers: `diff = steps(3^p·m+x) − steps(m)` concentrates on **−p** (mirror image of result #1); combines additively with base 2 (`6^p` gives diff=0); specific to primes 2,3 — other prime powers (5,7,11,13) show no effect | New this session, control-tested; the `−p` value and the prime-2,3 specificity are now **proved** (#11, #12) ([§13](README_extra.md#13-new-finding-the-phenomenon-generalizes-to-powers-of-3-answering-the-original-readmes-5-open-question)) |
@@ -34,12 +34,14 @@ This is not a claim about the Collatz conjecture itself (true/false, cycles, div
 - ~~The −p mechanism for powers of 3 (result #9) is empirically and partially (via merging classes) confirmed but has no closed-form proof analogous to §3's for base 2.~~ **Resolved by §15** for the *value* of the diff (it is forced to be −p); the frequency question remains open.
 - ~~Whether other an+b Collatz-like maps (not just the standard 3n+1) show analogous effects — untested.~~ **Resolved by §18:** the `diff = L−p` law and the "multiplier must be `2^L·a^p`" constraint hold verbatim for every `an+b` map with `a` odd — §15's proof never used `a=3`. Verified for 5n+1 and 7n+1. (Existence/frequency of merging remains open, as always.)
 - The true asymptotic growth of the power-of-3 merging-class fraction (result #10) is unknown — it doesn't match the classical case's near-logarithmic pattern in the tested range, but whether it's a genuinely different growth law or an eventual-flattening transient is unresolved. §16c reduces this to counting parity-vector pairs satisfying `2^L·γ = 3^i'·x + γ'`; note the classical analogue of this classification problem is *known* to be hard — Garner's proposed classification was disproven by Elia & Tucker (2015).
+- For the *classical* merging-class fraction, §19 shows the log-growth law **must** break down between k≈31,000 and k≈91,000 (combining #6 and #5b's data via `agreement(B) ≥ f(B)`) — but where it bends, and to what, is unknown.
+- **Verification task, not a research question:** obtain Gao (1993), *Discrete Math.* 112, and check whether its density table already establishes result #6's increasing trend (see §19). This gates whether #6 is novel.
 
 ## Repository contents
 
 ```
 README.md                    this summary
-README_extra.md              full write-up (18 sections + Addendum)
+README_extra.md              full write-up (19 sections + Addendum)
 LICENSE                      MIT
 results/                     raw CSV data from §2, §1's single-block run,
                               and §14's power-of-3 merging-class sweep
@@ -53,7 +55,7 @@ general_merging_test.py, large_scale_sampling.c, coupling_experiment3/4/5.py*,
 coupling_scaling.c*, fit_gamma.py*, fast_slow_test.py*, minimal_K_test.py*,
 hypothesis2_test.py*
 
-§10-18 follow-ups (this session's independent re-verification + new findings):
+§10-19 follow-ups (this session's independent re-verification + new findings):
 k_cluster_analysis.py, quantile_scaling_analysis.py, quantile_scaling_large.py,
 coupling_exhaustive_verify.py, base_generalization_test.py, power_of_3_test.py,
 power_of_3_merging_classes.py, power_of_3_merging_classes_fast.py,

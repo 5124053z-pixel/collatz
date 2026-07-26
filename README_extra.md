@@ -18,7 +18,7 @@ Later update: §10-13 independently re-verify the Addendum's claims after discov
 
 **Addendum (coupling theory):** [0. Motivation](#0-motivation) · [1. Definitional trap](#1-a-definitional-trap-documented-for-honesty) · [2. Exhaustive result](#2-result-early-merging-appears-to-fully-explain-agreement-at-every-scale-tested) · [3. Tail distribution](#3-coupling-time-distribution-exponential-looking-tail-but-its-a-two-component-mixture) · [4. γ(bits) scaling](#addendum-4-gamma-scaling) · [5. Two-component mixture](#5-resolving-the-mismatch-the-distribution-is-a-two-component-mixture) · [6. Fast component](#6-hypothesis-1-confirmed-the-fast-component-is-explained-by-tiny-scale-independent-residue-classes) · [7. Own trajectory irrelevant](#7-hypothesis-2-mostly-refuted-with-a-clean-positive-finding-instead-ns-own-trajectory-length-is-irrelevant-local-2-adic-structure-is-what-matters) · [9. Summary](#9-summary-established-vs-still-open)
 
-**This session's follow-ups:** [10. K-clustering re-verified](#10-follow-up-2026-07-26-independent-re-verification-a-methodology-caveat-and-the-4-connection-question-resolved-negatively) · [11. Quantile scaling re-verified](#11-follow-up-independent-re-verification-of-the-quantile-scaling-mixture-model-5) · [12. Exhaustive check re-verified](#12-follow-up-independent-re-verification-of-the-exhaustive-2-claim) · [13. NEW: generalizes to powers of 3](#13-new-finding-the-phenomenon-generalizes-to-powers-of-3-answering-the-original-readmes-5-open-question) · [14. NEW: merging-class fraction at larger moduli](#14-follow-up-pushing-13s-merging-class-fraction-to-larger-moduli-does-it-show-the-same-log-type-growth-as-5b) · [15. NEW: proof that the diff value is forced](#15-a-proof-that-the-diff-value-is-forced-one-argument-explaining-5a-13-and-the-6p-case) · [16. NEW: why only primes 2,3 + literature placement](#16-consequences-of-15-why-only-the-primes-2-and-3-and-where-this-sits-in-the-literature) · [17. NEW: proof for §4's alternating family](#17-filling-the-gap-in-4-a-proof-that-the-alternating-family-actually-gives-diff--l) · [18. NEW: generalizes to every an+b map](#18-the-whole-thing-was-never-about-3-generalization-to-every-anb-map)
+**This session's follow-ups:** [10. K-clustering re-verified](#10-follow-up-2026-07-26-independent-re-verification-a-methodology-caveat-and-the-4-connection-question-resolved-negatively) · [11. Quantile scaling re-verified](#11-follow-up-independent-re-verification-of-the-quantile-scaling-mixture-model-5) · [12. Exhaustive check re-verified](#12-follow-up-independent-re-verification-of-the-exhaustive-2-claim) · [13. NEW: generalizes to powers of 3](#13-new-finding-the-phenomenon-generalizes-to-powers-of-3-answering-the-original-readmes-5-open-question) · [14. NEW: merging-class fraction at larger moduli](#14-follow-up-pushing-13s-merging-class-fraction-to-larger-moduli-does-it-show-the-same-log-type-growth-as-5b) · [15. NEW: proof that the diff value is forced](#15-a-proof-that-the-diff-value-is-forced-one-argument-explaining-5a-13-and-the-6p-case) · [16. NEW: why only primes 2,3 + literature placement](#16-consequences-of-15-why-only-the-primes-2-and-3-and-where-this-sits-in-the-literature) · [17. NEW: proof for §4's alternating family](#17-filling-the-gap-in-4-a-proof-that-the-alternating-family-actually-gives-diff--l) · [18. NEW: generalizes to every an+b map](#18-the-whole-thing-was-never-about-3-generalization-to-every-anb-map) · [19. NEW: §5d vs §14 — the log law must break](#19-cross-checking-5d-against-5b14-the-log-growth-law-provably-breaks-down)
 
 ## Repository contents
 
@@ -283,6 +283,8 @@ This is stated as an informal empirical pattern, not a theorem — turning it in
 **Note (see Addendum §7):** a follow-up test found that this "simple own trajectory" principle, as tested directly on individual n (rather than on a fixed repeated block x), does *not* transfer — n's own total stopping time shows essentially zero correlation with merge speed against n+1. What does transfer is a related but distinct idea: *local* 2-adic bit structure near the LSB, rather than the global shape of the trajectory. See Addendum §7 for details.
 
 ### 5d. The classical "~50%" is not the limit — it approaches 100%
+
+> **⚠ Unverified priority concern (added with §19).** There is an unchecked lead that the qualitative half of this section — "the ~50% is not a stable limit, it increases with n" — may already appear in G.-G. Gao, *Discrete Math.* **112** (1993), whose density table reportedly rises from `0.310` at `10²` to `0.512` at `10⁸`. That report comes from a search-engine summary and **has not been verified against the paper**, which is paywalled. Do not treat this section as novel until [§19](#19-cross-checking-5d-against-5b14-the-log-growth-law-provably-breaks-down)'s action item is carried out. Note the *scale* reached below (~10^27000, 98%) goes far beyond `10⁸` regardless.
 
 Switching from exhaustive enumeration to random sampling (much cheaper, lets us reach vastly larger scales) resolves the open question from §5b/§5c in an unexpected direction. Sampling steps(n) == steps(n+1) for random n of increasing bit length (see large_scale_sampling.c, GMP + OpenMP, run by a reader on their own machine):
 
@@ -909,6 +911,61 @@ Zero violations across every merging class found, for `a = 3, 5, 7`.
 - **Existence is still not addressed.** As throughout §15–§17, this constrains what merging *must* look like, never whether it happens. Notably, merging classes were markedly harder to find for `a = 5, 7` than for `a = 3` (first non-trivial ones appearing around modulus 2^11–2^12 rather than 2^2–2^5), which is itself an unexplained empirical observation of the same "frequency" kind that remains open.
 - **Provenance:** same standing caveat as §15–§17. The argument is elementary and the generalized `an+b` setting is heavily studied (Matthews, Lagarias' survey, and others), so this is quite likely known.
 - **Relation to the Collatz conjecture: none.**
+
+## 19. Cross-checking §5d against §5b/§14: the log-growth law provably breaks down
+
+§5d (agreement rate climbing toward 100% at huge bit lengths) and §5b/§14 (merging-class fraction at modulus 2^k) have been treated as separate measurements. They are not independent, and comparing them yields a hard constraint — using no new computation, only arithmetic on data already in this repository.
+
+### The two are linked by an inequality
+
+Two facts tie them together:
+
+1. **Merging classes nest upward.** If `r (mod 2^k)` is a merging class, then both of its lifts `r` and `r + 2^k (mod 2^(k+1))` are merging classes too — every representative of a lift is a representative of the original. So the *set* of integers covered by merging classes grows with `k`, and `f(k)` (the fraction measured in §5b/§14) is exactly the density of integers lying in some merging class detectable at level `≤ k`.
+2. **Being in a merging class implies agreement.** For the classical pairing this means `α = β` (§15 with `L = p = 0`), so `steps(n) = steps(n+1)`.
+
+For a random `B`-bit `n`, the residue `n mod 2^k` is essentially uniform for every `k ≤ B`. Taking `k = B`:
+
+```
+agreement(B)  ≥  f(B)
+```
+
+This must hold for every `B`. It is not an approximation.
+
+### Applying it
+
+§5b/§14 fit `increment(k) × k ≈ 7.2` with `f(27) = 42.4%`, i.e. `f(k) ≈ 42.4 + 7.2·ln(k/27)` percent. Comparing against §5d's sampled agreement rates:
+
+| bits `B` | §5d agreement | extrapolated `f(B)` | gap `agreement − f` |
+|---|---|---|---|
+| 53 | 49.6% | 47.3% | +2.3 |
+| 264 | 68.6% | 58.8% | +9.8 |
+| 1299 | 83.4% | 70.3% | +13.1 |
+| 3756 | 89.4% | 77.9% | +11.5 |
+| 10857 | 94.3% | 85.6% | +8.7 |
+| 31377 | 96.2% | 93.2% | +3.0 |
+| 90680 | 98.0% | **100.9%** | **−2.9  ← impossible** |
+
+The gap is positive everywhere it can be, exactly as the inequality requires — a good consistency check on both datasets. But at the last row the extrapolated `f` exceeds the measured agreement, and also exceeds 100%, both of which are impossible. Therefore:
+
+> **The log-type growth law of §5b/§14 cannot continue indefinitely. It must bend downward somewhere between `k ≈ 31,000` and `k ≈ 91,000` at the latest.** (Extended naively it would reach 100% at `k ≈ 80,000`.)
+
+### What this is and isn't
+
+**Is.** A genuine constraint on §14's open question, obtained by combining two datasets that had been reported separately. §14 left the asymptotics of `f(k)` completely open and noted the growth showed "no sign of flattening"; this shows flattening is *forced*, and bounds where. It also mildly corroborates both datasets, since the required inequality holds in all the rows where it can.
+
+**Isn't.** It says nothing about *why* the law bends, or what the true asymptotic form is. And the conclusion is not surprising in itself — any law growing like `ln k` without bound must eventually break a 100% ceiling. The content is the *location*: the break is forced to happen within reach of already-measured scales, not at some astronomically remote `k`.
+
+**Caveats.** §5d's rates are sampled, so they carry sampling error (small at these sample sizes, but nonzero). The extrapolation of `f` runs three orders of magnitude in `k` beyond where it was fit (`k ≤ 27`), so its precise values are not to be trusted — but the *direction* of the contradiction is robust, since `f` is increasing and any reasonable extrapolation of a `+7.2/k`-per-step law overshoots the measured agreement well before `B ≈ 90,000`.
+
+### An unresolved literature question about §5d itself
+
+Separately from the above: **§5d's core observation may not be new, and this needs checking before the section is relied on.** A web search (2026-07-26) surfaced a summary asserting that G.-G. Gao, *On consecutive numbers of the same height in the Collatz problem*, **Discrete Math. 112** (1993) 261–267, contains a density table showing `d(x)` rising from `0.310` at `x = 10²` to `0.512` at `x = 10⁸` — which, if accurate, is precisely §5b/§5d's "the ~50% is not a stable limit, it climbs" observation, published in 1993.
+
+**This has not been verified.** The paper is paywalled (ScienceDirect returned 403), and the numbers above come from a search-engine summary — exactly the class of source that produced the citation errors documented in §6. They are recorded here as a lead to check, not as a fact, and no correction has been made to §5d on their basis.
+
+**Action required:** obtain Gao (1993) through an institutional subscription and check whether its density table already establishes the increasing trend. Note that this repo already cites Gao 1993 (in §5a's correction) but only for the general "clustering" phenomenon, apparently without anyone having examined this particular table. If the lead is confirmed, §5d should be relabelled as independent rediscovery in the same manner as §5b — with the caveat that §5d's *scale* (sampling out to ~10^27000, reaching 98%) still goes far beyond Gao's `10⁸`, where the density had only just passed 0.5, so the stronger claim "it approaches 100%" may survive even if "it increases" does not.
+
+Also worth checking: *Computing streaks of consecutive numbers with the same Collatz height*, **J. Supercomputing** (2025), doi:10.1007/s11227-025-07820-8 — recent work in exactly this area, likewise paywalled and unexamined here.
 
 ## Acknowledgments (Addendum)
 
