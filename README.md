@@ -518,6 +518,8 @@ Every single agreeing-pair count from the original (lost-code) table matches **e
 
 See `coupling_exhaustive_verify.py` (self-contained, pure Python, memoized; run: `python coupling_exhaustive_verify.py <N>`).
 
+**Caveat: memory, not time, is the real bottleneck for pushing N further.** An attempt at N=300,000,000 was aborted partway through after its dict-based memoization cache drove system free memory from ~19GB down to ~640MB (a ~24GB cache for 300M entries, i.e. roughly 80 bytes/entry — ordinary CPython dict/int overhead, not a leak). The run was killed to avoid risking system-wide slowdown. A memory-efficient rewrite (e.g. a fixed-width array instead of a dict, or a windowed/streaming cache) would likely allow another 3-5x before hitting the same wall on a 32GB machine; this wasn't attempted here.
+
 ## 13. New finding: the phenomenon generalizes to powers of 3 (answering the original README's §5 open question)
 
 The original README's §5 left open: *"Does the phenomenon generalize to bases other than 2^L ... or to other an+b Collatz-like maps?"* This had never been tested. It now has an answer.
