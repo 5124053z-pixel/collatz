@@ -68,6 +68,12 @@ coupling_exhaustive_verify.py           independent re-derivation of §2's
                                          exhaustive early-merge check;
                                          reproduces the original table
                                          exactly and extends past it
+base_generalization_test.py             §13: control test, generic (non
+                                         2/3-power) multipliers show no
+                                         effect
+power_of_3_test.py                      §13: main finding, c=3^p gives
+                                         diff=-p, generalizing the
+                                         phenomenon beyond base 2
 ```
 
 ## 1. Construction
@@ -507,6 +513,34 @@ Unlike §5b–§5d, the Addendum's §2 exhaustive table (N=1e6/5e6/15e6/60e6, 10
 Every single agreeing-pair count from the original (lost-code) table matches **exactly**, digit for digit, and the zero-exceptions / 100.0000% early-merge result reproduces cleanly at every scale, including the new N=100,000,000 point which goes beyond anything in the original table. This closes the biggest provenance gap left by the lost tooling: §2's central claim is no longer resting on unreproducible code, and now has independent exhaustive verification to a new high-water mark of N=10^8.
 
 See `coupling_exhaustive_verify.py` (self-contained, pure Python, memoized; run: `python coupling_exhaustive_verify.py <N>`).
+
+## 13. New finding: the phenomenon generalizes to powers of 3 (answering the original README's §5 open question)
+
+The original README's §5 left open: *"Does the phenomenon generalize to bases other than 2^L ... or to other an+b Collatz-like maps?"* This had never been tested. It now has an answer.
+
+**Control: generic non-power-of-2/3 multipliers show no effect.** Building `N_{k+1} = c*N_k + x` for decimal blocks (c=10^3, 10^4), a large prime (c=1,000,003), and an arbitrary composite (c=12,345) — analogous to the original §1 construction but in a base unrelated to the Collatz map's own arithmetic — produces no concentration at all: `diff_k` values scatter across a wide, essentially unstructured range, with the most common single value occurring only 2-7% of the time, not increasing with more iterations. See `base_generalization_test.py`.
+
+**Main finding: c = 3^p produces a clean, scale-increasing concentration on diff = −p.** Testing `diff = steps(3^p * m + x) - steps(m)` for random m (`power_of_3_test.py`, same methodology as §5a's `random_m_test.py`), across p = 1, 2, 3, 5 and several x per p:
+
+| p (c=3^p) | m bits=16 | bits=64 | bits=256 | bits=1024 | bits=4096 |
+|---|---|---|---|---|---|
+| p=1, x=0 | 40.0% | 51.3% | 65.3% | 82.7% | 92.0% |
+| p=1, x=2 | 55.3% | 72.0% | 80.0% | 87.3% | 94.0% |
+| p=2, x=1 | 35.3% | 51.3% | 66.7% | 82.7% | 90.7% |
+| p=3, x=1 | 14.0% | 40.0% | 54.0% | 75.3% | 87.3% |
+| p=5, x=1 | 12.7% | 30.0% | 54.0% | 75.3% | 84.0% |
+
+(freq(diff = −p), i.e. the fraction of trials landing exactly on the dominant value). Every (p, x) combination tested shows the same shape as §5a's original result: low frequency at small bit lengths, climbing steadily toward (but not yet reaching, in this bit-length range) 100% as m grows — strong evidence this is the same general phenomenon, not a coincidence specific to base 2.
+
+**A trivial exact case, flagged honestly.** p=1, x=1 (i.e. `diff = steps(3m+1) - steps(m)`) measured *exactly* 100.0% at every bit length tested, with zero exceptions. This is **not a new discovery** — it's a restatement of the Collatz map's own definition: for odd m, `T(m) = 3m+1` by definition, so the trajectory of `3m+1` *is* m's own trajectory starting one step in, making `steps(3m+1) = steps(m) - 1` exactly and trivially for every odd m (all m tested here are odd, forced by the random-generation code). Included for completeness and to avoid the appearance of overclaiming.
+
+**Mechanism (direct trajectory inspection, same style of evidence as the Addendum's coupling theory):** e.g. for c=9 (p=2), m=15: trajectory of m is `15, 46, 23, 70, 35, 106, 53, 160, 80, 40, ...` (reaches 40 after 9 steps), while the trajectory of `9*15+1=136` is `136, 68, 34, 17, 52, 26, 13, 40, ...` (reaches the *same* value 40 after only 7 steps). Once merged, the rest is identical, so `steps(136) = steps(15) - 2` exactly = −p. The general pattern: `3^p * m + x`'s trajectory literally coalesces into m's own trajectory, but reaches the shared point exactly p steps sooner — the mirror image of the original §3 mechanism (where `2^L * N_k + x`'s trajectory shares a *prefix* with N_k's, adding L steps) rather than merging early.
+
+**Confirms the mechanisms combine additively.** Testing c = 6^p = 2^p·3^p (which bundles both the base-2 "add p steps" mechanism and the base-3 "save p steps" mechanism) gives `diff = 0` as the dominant value at every p tested (1–4) and every bit length — the two effects exactly cancel, as the additive mechanism would predict.
+
+**Conclusion.** The phenomenon is not a base-2 peculiarity. It generalizes specifically to multipliers built from the prime factors that appear in the Collatz map's own arithmetic (2 in `n/2`, 3 in `3n+1`) — with base 2 adding L steps and base 3 *removing* p steps — and does not appear for multipliers unrelated to that arithmetic (decimal, prime, or arbitrary composite bases tested show no effect). This resolves the original README's §5 open question about base-generalization, in a more specific and interesting way than a simple yes/no.
+
+See `power_of_3_test.py` and `base_generalization_test.py` (self-contained, pure Python).
 
 ## Acknowledgments (Addendum)
 
