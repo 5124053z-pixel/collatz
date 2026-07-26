@@ -18,7 +18,7 @@ Later update: §10-13 independently re-verify the Addendum's claims after discov
 
 **Addendum (coupling theory):** [0. Motivation](#0-motivation) · [1. Definitional trap](#1-a-definitional-trap-documented-for-honesty) · [2. Exhaustive result](#2-result-early-merging-appears-to-fully-explain-agreement-at-every-scale-tested) · [3. Tail distribution](#3-coupling-time-distribution-exponential-looking-tail-but-its-a-two-component-mixture) · [4. γ(bits) scaling](#addendum-4-gamma-scaling) · [5. Two-component mixture](#5-resolving-the-mismatch-the-distribution-is-a-two-component-mixture) · [6. Fast component](#6-hypothesis-1-confirmed-the-fast-component-is-explained-by-tiny-scale-independent-residue-classes) · [7. Own trajectory irrelevant](#7-hypothesis-2-mostly-refuted-with-a-clean-positive-finding-instead-ns-own-trajectory-length-is-irrelevant-local-2-adic-structure-is-what-matters) · [9. Summary](#9-summary-established-vs-still-open)
 
-**This session's follow-ups:** [10. K-clustering re-verified](#10-follow-up-2026-07-26-independent-re-verification-a-methodology-caveat-and-the-4-connection-question-resolved-negatively) · [11. Quantile scaling re-verified](#11-follow-up-independent-re-verification-of-the-quantile-scaling-mixture-model-5) · [12. Exhaustive check re-verified](#12-follow-up-independent-re-verification-of-the-exhaustive-2-claim) · [13. NEW: generalizes to powers of 3](#13-new-finding-the-phenomenon-generalizes-to-powers-of-3-answering-the-original-readmes-5-open-question) · [14. NEW: merging-class fraction at larger moduli](#14-follow-up-pushing-13s-merging-class-fraction-to-larger-moduli-does-it-show-the-same-log-type-growth-as-5b) · [15. NEW: proof that the diff value is forced](#15-a-proof-that-the-diff-value-is-forced-one-argument-explaining-5a-13-and-the-6p-case) · [16. NEW: why only primes 2,3 + literature placement](#16-consequences-of-15-why-only-the-primes-2-and-3-and-where-this-sits-in-the-literature) · [17. NEW: proof for §4's alternating family](#17-filling-the-gap-in-4-a-proof-that-the-alternating-family-actually-gives-diff--l)
+**This session's follow-ups:** [10. K-clustering re-verified](#10-follow-up-2026-07-26-independent-re-verification-a-methodology-caveat-and-the-4-connection-question-resolved-negatively) · [11. Quantile scaling re-verified](#11-follow-up-independent-re-verification-of-the-quantile-scaling-mixture-model-5) · [12. Exhaustive check re-verified](#12-follow-up-independent-re-verification-of-the-exhaustive-2-claim) · [13. NEW: generalizes to powers of 3](#13-new-finding-the-phenomenon-generalizes-to-powers-of-3-answering-the-original-readmes-5-open-question) · [14. NEW: merging-class fraction at larger moduli](#14-follow-up-pushing-13s-merging-class-fraction-to-larger-moduli-does-it-show-the-same-log-type-growth-as-5b) · [15. NEW: proof that the diff value is forced](#15-a-proof-that-the-diff-value-is-forced-one-argument-explaining-5a-13-and-the-6p-case) · [16. NEW: why only primes 2,3 + literature placement](#16-consequences-of-15-why-only-the-primes-2-and-3-and-where-this-sits-in-the-literature) · [17. NEW: proof for §4's alternating family](#17-filling-the-gap-in-4-a-proof-that-the-alternating-family-actually-gives-diff--l) · [18. NEW: generalizes to every an+b map](#18-the-whole-thing-was-never-about-3-generalization-to-every-anb-map)
 
 ## Repository contents
 
@@ -104,6 +104,9 @@ merge_diff_theorem_verify.py            §15: verifies the coefficient-
 alternating_family_theorem_verify.py    §17: verifies the proof that §4's
                                          alternating family gives diff = L
                                          for all m = 2 (mod 4), m >= 6
+general_an_b_merge_verify.py            §18: verifies that §15/§16 hold
+                                         verbatim for the 5n+1 and 7n+1
+                                         maps with 3 replaced by a
 ```
 
 ## 1. Construction
@@ -843,6 +846,69 @@ Note this is exactly the shape §15 predicts: `p = 0`, so `diff = L − p = L`, 
 **Relation to the Collatz conjecture: none**, for the same reason as §15 — it compares two stopping times, and is vacuous if either trajectory fails to terminate.
 
 Verified in `alternating_family_theorem_verify.py`: both claimed step counts and the resulting diff, for `L = 2, 4, 6, 12, 20` over 400 values of `u` each, zero failures; plus the documented `m = 2` edge case and the three control classes.
+
+## 18. The whole thing was never about 3: generalization to every an+b map
+
+README.md's "Still open" list has carried this item since the original write-up:
+
+> Whether other `an+b` Collatz-like maps (not just the standard 3n+1) show analogous effects — **untested**.
+
+It can be answered without testing, because **§15's proof never uses `a = 3`**. Re-reading it, the argument consumes exactly two facts:
+
+1. On a fixed parity vector the map is affine, so the value reached is `(a^i·m + γ)/2^h`;
+2. powers of `a` and powers of `2` can be separated by unique factorization — which needs only `gcd(a, 2) = 1`, i.e. `a` odd.
+
+Neither is special to 3.
+
+### Theorem (generalized)
+
+*Let `a` be odd and `b` odd, and consider the generalized Collatz map*
+
+```
+T(n) = n/2        if n is even
+T(n) = a·n + b    if n is odd
+```
+
+*Let `S` be an infinite set of `m` on which the pairing `(m, n = c·m + x)` merges uniformly (common value after fixed `α` steps from `m` and `β` from `n`, with fixed parity vectors). Then:*
+
+```
+c = a^(i−i') · 2^((β−i') − (α−i))
+```
+
+*and both exponents are forced non-negative exactly as in §16a (a negative power of `a` would force `a | 2^k`; a negative power of 2 would equate an even number with an odd one). Hence:*
+
+- ***uniform merging is possible only when `c = 2^L · a^p` for some `L, p ≥ 0`***, and
+- ***in that case `β − α = L − p`.***
+
+For `a = 3` this is exactly §15 + §16a. The proof is the same four lines with `3` replaced by `a`.
+
+### What this says
+
+The repo's story so far has been framed around a coincidence: the special multipliers are 2 and 3, "the two primes that appear in the Collatz map's own arithmetic" (§13). §16a already reduced that from mystique to unique factorization. §18 removes the last of it: **there is nothing about 3.** For the `5n+1` map the special multipliers are 2 and 5; for `7n+1` they are 2 and 7. Each map's own multiplier plays the role 3 plays in the classical case, with an identical `diff = L − p` law.
+
+So the answer to the open question is not merely "yes, other maps show analogous effects" but something sharper: **the effect is a structural property of the shape of the map, not of the number 3**, and the entire `+L` / `−p` phenomenology transfers verbatim with `3 ↦ a`.
+
+### Verification
+
+`general_an_b_merge_verify.py` finds merging classes by brute force under the `5n+1` and `7n+1` maps and checks both identities. Sample (full output from the script):
+
+| map | `c` | modulus | `α (i)` | `β (i′)` | `i−i′ = p` | halvings | `diff` |
+|---|---|---|---|---|---|---|---|
+| 5n+1 | `5` (p=1), x=3 | 2^12 | 16 (5) | 15 (4) | 1 ✓ | 11 = 11 ✓ | −1 ✓ |
+| 5n+1 | `25` (p=2), x=1 | 2^11 | 15 (5) | 13 (3) | 2 ✓ | 10 = 10 ✓ | −2 ✓ |
+| 5n+1 | `10` (L=1,p=1), x=1 | 2^11 | 15 (5) | 15 (4) | 1 ✓ | 10 = 10 ✓ | 0 ✓ |
+| 7n+1 | `7` (p=1), x=3 | 2^4 | 5 (2) | 4 (1) | 1 ✓ | 3 = 3 ✓ | −1 ✓ |
+
+Zero violations across every merging class found, for `a = 3, 5, 7`.
+
+**A degeneracy that had to be excluded.** Taking `x = b` makes `n = a·m + b = T(m)` for odd `m`, so the pair "merges" at `(α, β) = (1, 0)` for a trivial reason — the same degenerate case §13 flagged for `p=1, x=1` in the classical map. An initial run of this check was dominated by exactly that case for `a = 5, 7`; the results above deliberately use `x ≠ b` (or `p ≥ 2`) so the confirmations are substantive.
+
+### Caveats
+
+- **Stopping times need not exist for `a ≥ 5`.** The `5n+1` map has divergent orbits and several cycles, so "total stopping time" is often undefined. The theorem is a statement about the *relative step counts at the merge*, which is well defined regardless; the corollary about stopping-time differences applies only when both trajectories terminate. This is a real weakening compared to the `a = 3` case, and it is why the verification above checks merge structure rather than stopping times.
+- **Existence is still not addressed.** As throughout §15–§17, this constrains what merging *must* look like, never whether it happens. Notably, merging classes were markedly harder to find for `a = 5, 7` than for `a = 3` (first non-trivial ones appearing around modulus 2^11–2^12 rather than 2^2–2^5), which is itself an unexplained empirical observation of the same "frequency" kind that remains open.
+- **Provenance:** same standing caveat as §15–§17. The argument is elementary and the generalized `an+b` setting is heavily studied (Matthews, Lagarias' survey, and others), so this is quite likely known.
+- **Relation to the Collatz conjecture: none.**
 
 ## Acknowledgments (Addendum)
 
