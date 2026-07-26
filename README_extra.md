@@ -18,7 +18,7 @@ Later update: §10-13 independently re-verify the Addendum's claims after discov
 
 **Addendum (coupling theory):** [0. Motivation](#0-motivation) · [1. Definitional trap](#1-a-definitional-trap-documented-for-honesty) · [2. Exhaustive result](#2-result-early-merging-appears-to-fully-explain-agreement-at-every-scale-tested) · [3. Tail distribution](#3-coupling-time-distribution-exponential-looking-tail-but-its-a-two-component-mixture) · [4. γ(bits) scaling](#addendum-4-gamma-scaling) · [5. Two-component mixture](#5-resolving-the-mismatch-the-distribution-is-a-two-component-mixture) · [6. Fast component](#6-hypothesis-1-confirmed-the-fast-component-is-explained-by-tiny-scale-independent-residue-classes) · [7. Own trajectory irrelevant](#7-hypothesis-2-mostly-refuted-with-a-clean-positive-finding-instead-ns-own-trajectory-length-is-irrelevant-local-2-adic-structure-is-what-matters) · [9. Summary](#9-summary-established-vs-still-open)
 
-**This session's follow-ups:** [10. K-clustering re-verified](#10-follow-up-2026-07-26-independent-re-verification-a-methodology-caveat-and-the-4-connection-question-resolved-negatively) · [11. Quantile scaling re-verified](#11-follow-up-independent-re-verification-of-the-quantile-scaling-mixture-model-5) · [12. Exhaustive check re-verified](#12-follow-up-independent-re-verification-of-the-exhaustive-2-claim) · [13. NEW: generalizes to powers of 3](#13-new-finding-the-phenomenon-generalizes-to-powers-of-3-answering-the-original-readmes-5-open-question) · [14. NEW: merging-class fraction at larger moduli](#14-follow-up-pushing-13s-merging-class-fraction-to-larger-moduli-does-it-show-the-same-log-type-growth-as-5b) · [15. NEW: proof that the diff value is forced](#15-a-proof-that-the-diff-value-is-forced-one-argument-explaining-5a-13-and-the-6p-case) · [16. NEW: why only primes 2,3 + literature placement](#16-consequences-of-15-why-only-the-primes-2-and-3-and-where-this-sits-in-the-literature)
+**This session's follow-ups:** [10. K-clustering re-verified](#10-follow-up-2026-07-26-independent-re-verification-a-methodology-caveat-and-the-4-connection-question-resolved-negatively) · [11. Quantile scaling re-verified](#11-follow-up-independent-re-verification-of-the-quantile-scaling-mixture-model-5) · [12. Exhaustive check re-verified](#12-follow-up-independent-re-verification-of-the-exhaustive-2-claim) · [13. NEW: generalizes to powers of 3](#13-new-finding-the-phenomenon-generalizes-to-powers-of-3-answering-the-original-readmes-5-open-question) · [14. NEW: merging-class fraction at larger moduli](#14-follow-up-pushing-13s-merging-class-fraction-to-larger-moduli-does-it-show-the-same-log-type-growth-as-5b) · [15. NEW: proof that the diff value is forced](#15-a-proof-that-the-diff-value-is-forced-one-argument-explaining-5a-13-and-the-6p-case) · [16. NEW: why only primes 2,3 + literature placement](#16-consequences-of-15-why-only-the-primes-2-and-3-and-where-this-sits-in-the-literature) · [17. NEW: proof for §4's alternating family](#17-filling-the-gap-in-4-a-proof-that-the-alternating-family-actually-gives-diff--l)
 
 ## Repository contents
 
@@ -101,6 +101,9 @@ merge_diff_theorem_verify.py            §15: verifies the coefficient-
                                          matching theorem forcing
                                          diff = L-p, across base-2,
                                          base-3 and mixed 6^p pairings
+alternating_family_theorem_verify.py    §17: verifies the proof that §4's
+                                         alternating family gives diff = L
+                                         for all m = 2 (mod 4), m >= 6
 ```
 
 ## 1. Construction
@@ -157,6 +160,8 @@ x / 2 = (2^L − 1) / 3          (integer, since x/2 has this closed form)
 I.e. x's own Collatz trajectory reaches exactly 2^L (the power of two matching its own bit length) within 2 steps, then descends to 1 by pure halving. This is a much sharper condition than merely "reaches some power of two quickly" — a control test using numbers that reach unrelated powers of two (found by tracing the Collatz map backward from 2^m for m ≠ L) does not reproduce the 100% effect (only 43–70%, same as generic numbers, see exact_power_test.py).
 
 The self-referential condition — landing exactly on 2^L where L is the block's own length — appears to align perfectly with the shift amount L used when constructing N_{k+1}, eliminating the carry/interference that causes deviation from diff_k = L for generic blocks.
+
+**Correction (added with §17).** The preceding paragraph is an observation, not a derivation — this section proves the identity `3(x/2)+1 = 2^L`, but the step from that identity to `diff = L` was never actually carried out here, despite this section being labelled "proved" in README.md's summary table. [§17](#17-filling-the-gap-in-4-a-proof-that-the-alternating-family-actually-gives-diff--l) closes the gap for `m ≡ 2 (mod 4)` (a quarter of all residues, every even `L`, one explicit exception at `m=2`), by showing both trajectories reach `(3u+1)/2` — after 3 steps from `m` and `L+3` from `n`. The remaining three quarters of the 100% claim are still empirical.
 
 ## 5. Open questions
 
@@ -775,6 +780,69 @@ That last point is directly relevant to §14's open question. §14 measured the 
 **Revised assessment of what is and isn't new here.** The method (parity-vector pairs), the `c=1` results (Garner, Elia–Tucker), and the affine expansion lemma (Terras 1976; standard, sometimes called the Affine Expansion Lemma) are all established. What this repo appears to add is the extension from `c = 1` to general multipliers `c = 2^L·3^p` — the classical literature treats `(n, n+1)`, where `α = β` and `diff = 0`, whereas allowing `c ≠ 1` forces `α ≠ β` and produces the `diff = L − p` family, together with the 3-smoothness constraint of §16a. Given how elementary the argument is, and given this repo's track record of independently re-deriving known results, **the appropriate default remains that this too may be known somewhere not yet found.** It is recorded here because it explains this repo's own data, not as a priority claim.
 
 **Relation to the Collatz conjecture: still none.** §16a says which multipliers admit the mechanism; §16c says when it fires. Neither says anything about whether any trajectory terminates.
+
+## 17. Filling the gap in §4: a proof that the alternating family actually gives diff = L
+
+§4 is titled "The 100%-clean family" and is listed in README.md's table as "Proved + verified." Re-reading it in the light of §15/§16 shows this was slightly overstated. What §4 actually proves is the *algebraic identity*
+
+```
+x = 1010…10 (L bits)  ⟹  x/2 = (2^L − 1)/3  and  3·(x/2) + 1 = 2^L
+```
+
+and then says the self-referential condition "appears to align perfectly with the shift amount L … eliminating the carry/interference that causes deviation." That is an *observation*, not a derivation: the step from "x satisfies this identity" to "therefore `diff = L`" was never actually made. §15 now supplies the tools to close it.
+
+### Theorem
+
+*Let `L ≥ 2` be even and let `x = 2(2^L − 1)/3` be the alternating block of bit length `L` (equivalently: the `x` of §4, characterized by `3·(x/2) + 1 = 2^L`). Then for every `m ≡ 2 (mod 4)` with `m ≥ 6`, the trajectories of `m` and `n = 2^L·m + x` merge, and*
+
+```
+steps(n) − steps(m) = L      exactly.
+```
+
+**Proof.** Write `m = 2u` with `u` odd, and set `w = (3u+1)/2` (an integer, since `u` odd makes `3u+1` even).
+
+`m`'s trajectory, three steps:
+
+```
+2u  →  u  →  3u + 1  →  w
+```
+
+(valid since `2u` is even, `u` is odd, and `3u+1` is even).
+
+`n`'s trajectory. `n = 2^L·2u + x` is even, and
+
+```
+n/2 = 2^L·u + x/2
+```
+
+Here `x/2 = (2^L − 1)/3` is **odd**, while `2^L·u` is even (using `L ≥ 2`), so `n/2` is odd. Applying the odd rule and using the §4 identity `3·(x/2) + 1 = 2^L`:
+
+```
+3·(n/2) + 1 = 3·2^L·u + 3·(x/2) + 1
+            = 3·2^L·u + 2^L
+            = 2^L·(3u + 1)
+            = 2^(L+1)·w
+```
+
+so after `L+1` further halvings `n` reaches `w`. Total: `1 + 1 + (L+1) = L+3` steps.
+
+Both trajectories are therefore at `w` — `m` after 3 steps, `n` after `L+3`. Everything afterwards is identical, so `steps(n) − steps(m) = (L+3) − 3 = L`. ∎
+
+Note this is exactly the shape §15 predicts: `p = 0`, so `diff = L − p = L`, with odd-step counts `i = 1` (from `m`) and `i' = 1` (from `n`) satisfying `i = i' + p`, and halving counts `2 = (L+2) − L` matching.
+
+**The sole exception is `m = 2`**, whose trajectory reaches 1 after a single step and so never completes the three steps the argument needs. This is precisely analogous to the `n = 4` exception in §5b's classical theorem. Note the theorem otherwise has *no* lower bound and *no* exceptions — unlike §5b's, which required `n ≥ 12`.
+
+### What this does and does not settle
+
+**Settles.** The `diff = L` conclusion for §4's family is now derived rather than observed, on a full quarter of all residues (`m ≡ 2 mod 4`), for every even `L`, with one explicitly identified exception. This is the first actual proof in this repo that the alternating family produces `diff = L`, as opposed to a proof that it satisfies a suggestive identity.
+
+**Does not settle.** §4's stronger claim is that the alternating family gives **100%** — every `m`, not a quarter of them. The other three classes mod 4 do *not* merge at any fixed step-pair: a direct check (`alternating_family_theorem_verify.py`) finds 0 out of 200 cases for each of `m ≡ 0, 1, 3 (mod 4)`. They must merge later and less uniformly, or agree for non-merging reasons. So three quarters of §4's claim remains empirical. Relatedly, §5c reported that the merging-class fraction for this `x` converges to exactly `1/2` (count `= 2^(k−1) − 1` at modulus `2^k`); the class proved here accounts for `2^(k−2)` of those, i.e. **about half of the observed merging classes are now explained rigorously**, and the rest arise from deeper merges not covered by this argument.
+
+**Provenance caveat.** As with §15/§16, the technique is Garner's parity-vector method and the argument is elementary. The specific statement is about §4's alternating family, which does appear to be this repo's own construction, but the standing assumption remains that elementary results in this area are often already known.
+
+**Relation to the Collatz conjecture: none**, for the same reason as §15 — it compares two stopping times, and is vacuous if either trajectory fails to terminate.
+
+Verified in `alternating_family_theorem_verify.py`: both claimed step counts and the resulting diff, for `L = 2, 4, 6, 12, 20` over 400 values of `u` each, zero failures; plus the documented `m = 2` edge case and the three control classes.
 
 ## Acknowledgments (Addendum)
 

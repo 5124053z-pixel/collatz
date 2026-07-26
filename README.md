@@ -2,11 +2,11 @@
 
 Status: amateur/independent investigation, computationally verified, not peer-reviewed.
 
-**TL;DR.** Repeatedly prepending a fixed bit-block `x` (bit length `L`) to a number increases its Collatz total stopping time by an amount that converges — with probability approaching 1 — to exactly `L`. A specific family of blocks (`3·(x/2)+1 = 2^L`) makes this 100% exact from the first iteration. The same investigation also found that the classical "about half of n, n+1 share a total stopping time" folklore (OEIS A006577) is not a stable ~50% limit — it climbs toward 100% as n grows — and that this agreement is fully explained, at every scale tested, by the two trajectories literally coalescing to a common value before either reaches 1. A later follow-up found the whole phenomenon generalizes beyond base 2: multiplying by `3^p` produces a mirror-image effect (steps *decrease* by exactly `p`). A short coefficient-matching argument then proved *why*: whenever the two trajectories merge with fixed parity structure, the step difference is forced to be exactly `L − p`, and the multiplier must be 3-smooth (`2^L·3^p`) for merging to be possible at all — so the restriction to the primes 2 and 3 is a consequence of unique factorization, not a coincidence. What remains genuinely open is not the *value* of the effect but its *frequency*.
+**TL;DR.** Repeatedly prepending a fixed bit-block `x` (bit length `L`) to a number increases its Collatz total stopping time by an amount that converges — with probability approaching 1 — to exactly `L`. A specific family of blocks (`3·(x/2)+1 = 2^L`) makes this exact from the first iteration in every case tested — provably so for a quarter of all residues (§17), empirically for the rest. The same investigation also found that the classical "about half of n, n+1 share a total stopping time" folklore (OEIS A006577) is not a stable ~50% limit — it climbs toward 100% as n grows — and that this agreement is fully explained, at every scale tested, by the two trajectories literally coalescing to a common value before either reaches 1. A later follow-up found the whole phenomenon generalizes beyond base 2: multiplying by `3^p` produces a mirror-image effect (steps *decrease* by exactly `p`). A short coefficient-matching argument then proved *why*: whenever the two trajectories merge with fixed parity structure, the step difference is forced to be exactly `L − p`, and the multiplier must be 3-smooth (`2^L·3^p`) for merging to be possible at all — so the restriction to the primes 2 and 3 is a consequence of unique factorization, not a coincidence. What remains genuinely open is not the *value* of the effect but its *frequency*.
 
 This is not a claim about the Collatz conjecture itself (true/false, cycles, divergent trajectories). It is a set of concrete, checkable statements about specific number families and about the statistics of the total stopping time function.
 
-**This file is a short summary.** The full investigation — every table, the coupling-theory Addendum, the honest record of mistakes made and corrected along the way, and the newest power-of-3 generalization — is in **[README_extra.md](README_extra.md)**, organized into 16 sections + Addendum. This file exists so a new reader isn't faced with 500+ lines up front.
+**This file is a short summary.** The full investigation — every table, the coupling-theory Addendum, the honest record of mistakes made and corrected along the way, and the newest power-of-3 generalization — is in **[README_extra.md](README_extra.md)**, organized into 17 sections + Addendum. This file exists so a new reader isn't faced with 500+ lines up front.
 
 ## Established results (with strength of evidence)
 
@@ -14,7 +14,7 @@ This is not a claim about the Collatz conjecture itself (true/false, cycles, div
 |---|---|---|
 | 1 | `steps(2^L·N_k + x) − steps(N_k)` concentrates on `L`, converging toward high frequency as k grows | 105-block sweep, 0 exceptions ([§2](README_extra.md#2-main-empirical-finding)) |
 | 2 | Mechanism: shared bit-prefix forces identical parity vectors for the shared length | Proved ([§3](README_extra.md#3-why-this-happens-proved-part)) |
-| 3 | Alternating blocks (`3(x/2)+1=2^L` exactly) give 100% exact convergence from k=1 | Proved + verified ([§4](README_extra.md#4-the-100-clean-family)) |
+| 3 | Alternating blocks (`3(x/2)+1=2^L` exactly) give 100% exact convergence from k=1 | **Label corrected:** §4 proves only the identity `3(x/2)+1=2^L`, not that `diff=L` follows. §17 now proves `diff=L` for `m≡2 (mod 4)` (¼ of residues, every even L, one exception at m=2); the other ¾ remain empirical ([§4](README_extra.md#4-the-100-clean-family), [§17](README_extra.md#17-filling-the-gap-in-4-a-proof-that-the-alternating-family-actually-gives-diff--l)) |
 | 4 | Self-similarity of the construction isn't needed — same effect for `2^L·m+x`, any random `m` | ([§5a](README_extra.md#5a-generalization-the-self-similarity-turns-out-not-to-matter)) |
 | 5 | n≡4 (mod 8) provably merges with n+1 in exactly 3 steps; a slowly-growing family of such "merging classes" exists | Independently re-derived; **not new** — this is Garner (1985) / LaDue (2017) Corollary 5.1, see [§6](README_extra.md#6-relation-to-existing-theory) ([§5b](README_extra.md#5b-a-proved-partial-result-for-the-l1-base-case)) |
 | 6 | OEIS A006577's "~50%" is **not** a stable limit — raw agreement climbs to 98%+ by ~10⁵ digits | Sampled to n~10^27297 ([§5d](README_extra.md#5d-the-classical-50-is-not-the-limit--it-approaches-100)) |
@@ -27,7 +27,7 @@ This is not a claim about the Collatz conjecture itself (true/false, cycles, div
 
 ## Still open
 
-- No closed-form proof that Pr(diff_k = L) → 1 in general (only the alternating family is proved exactly). Note §15 now proves the *value* of diff is forced whenever a merge occurs — what remains open is entirely about the *frequency* of merging, not its value.
+- No closed-form proof that Pr(diff_k = L) → 1 in general. (Even for the alternating family, only `m≡2 mod 4` is proved — see §17.) Note §15 now proves the *value* of diff is forced whenever a merge occurs — what remains open is entirely about the *frequency* of merging, not its value.
 - No precise theoretical derivation of the two-component mixture's parameters (fast/slow split, the ≈bits^0.94 tail exponent) — currently fit, not derived.
 - No proof that zero-exception early-merging holds for *all* n (only verified exhaustively/by sampling to large but finite scales).
 - ~~The −p mechanism for powers of 3 (result #9) is empirically and partially (via merging classes) confirmed but has no closed-form proof analogous to §3's for base 2.~~ **Resolved by §15** for the *value* of the diff (it is forced to be −p); the frequency question remains open.
@@ -38,7 +38,7 @@ This is not a claim about the Collatz conjecture itself (true/false, cycles, div
 
 ```
 README.md                    this summary
-README_extra.md              full write-up (16 sections + Addendum)
+README_extra.md              full write-up (17 sections + Addendum)
 LICENSE                      MIT
 results/                     raw CSV data from §2, §1's single-block run,
                               and §14's power-of-3 merging-class sweep
@@ -52,11 +52,12 @@ general_merging_test.py, large_scale_sampling.c, coupling_experiment3/4/5.py*,
 coupling_scaling.c*, fit_gamma.py*, fast_slow_test.py*, minimal_K_test.py*,
 hypothesis2_test.py*
 
-§10-15 follow-ups (this session's independent re-verification + new findings):
+§10-17 follow-ups (this session's independent re-verification + new findings):
 k_cluster_analysis.py, quantile_scaling_analysis.py, quantile_scaling_large.py,
 coupling_exhaustive_verify.py, base_generalization_test.py, power_of_3_test.py,
 power_of_3_merging_classes.py, power_of_3_merging_classes_fast.py,
-merging_classes_pow3_fast.c, merge_diff_theorem_verify.py
+merging_classes_pow3_fast.c, merge_diff_theorem_verify.py,
+alternating_family_theorem_verify.py
 
 Unrelated side-quest:
 cycle_search.c               exhaustive Collatz-cycle search, negative result
