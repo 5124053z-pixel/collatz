@@ -51,6 +51,13 @@ minimal_K_test.py                       binary search for smallest modulus
 hypothesis2_test.py                     correlates merge time against n's own
                                          trajectory length and 2-adic/run-
                                          length features
+
+Follow-up (§10, after the Addendum tooling above was found to be lost):
+k_cluster_analysis.py                   independent re-derivation of §6's
+                                         K-distribution; finds a false-
+                                         positive risk in minimal-K search
+                                         and resolves the §4-connection
+                                         question (negatively)
 ```
 
 ## 1. Construction
@@ -414,8 +421,20 @@ Partial correlation of `steps(n)/bits` against `log(tau_couple)`, controlling fo
 **Open:**
 - Whether the 100% early-merge / zero-exception pattern holds for all n (currently: exhaustive to 6×10⁷, sampled with zero exceptions to 65536 bits).
 - A precise theoretical model for the two-component mixture — e.g. can the fast/slow split point and the p99 ≈ bits^0.94 exponent be derived (rather than fit) from the finite-state "carry" structure of the 3x+1 map read bit-serially (Bernstein–Lagarias)?
-- Why the fast component's modulus needs (§6, K values 3–14) cluster where they do, and whether this connects to §4's "exact 2^L" family in the original README.
+- Why the fast component's modulus needs (§6, K values 3–14) cluster where they do, and whether this connects to §4's "exact 2^L" family in the original README — **partially answered, see §10.**
+
+## 10. Follow-up (2026-07-26): independent re-verification, a methodology caveat, and the §4-connection question resolved (negatively)
+
+**Note on provenance.** The tooling behind §6–§8 (`coupling_experiment3/4/5.py`, `coupling_scaling.c`, `fit_gamma.py`, `fast_slow_test.py`, `minimal_K_test.py`, `hypothesis2_test.py`) was written and run in a session whose source files were never saved to disk — only the README text and result tables survived. Separately, four files referenced since §5b/§5c/§5d (`merging_residue_classes.py`, `merging_classes_fast.c`, `general_merging_test.py`, `large_scale_sampling.c`) existed locally but had never actually been uploaded to this repository; they have now been added. The lost §6–§8 tooling has not been reconstructed file-for-file, but its central claim is re-derived independently below using a new script, `k_cluster_analysis.py`.
+
+**Re-derivation of §6's K-distribution.** Sampling 400 random 2000-bit n and isolating fast mergers (tau_couple < 20) reproduces §6's shape closely: K=3 is the single most common minimal modulus (47/145 = 32.4%, vs. the original 32%), with counts falling off through K=14, matching the original run's K ≤ 14 range. This is independent evidence the original §6 finding was not a fluke of that particular (lost) implementation.
+
+**New finding: the minimal-K binary search can false-positive.** Cross-checking each minimal-K residue against the exhaustive, provably-correct classifier from `merging_residue_classes.py` (which checks *every* representative up to the modulus, not a handful of random trials), 129/133 (97%) of K≤9 cases matched exactly — but 4 did not, all of the form "K=3, r≡2 (mod 8)" merging at t=5. The exhaustive classifier shows r≡2 (mod 8) is *not* actually a uniform merging class (only r≡4 (mod 8) is, per §5b) — r≡2 (mod 8) splits into a merging sub-class (r≡2 mod 16) and a non-merging one (r≡10 mod 16). With only ~5 random trials per K in the binary search, all 4 exceptions happened to sample only the merging sub-class by chance, so the search reported "K=3 suffices" when the true minimal K was 4. **Practical implication:** §6's reported K-values (and by extension its mean K≈5.23) are very slightly biased low by this sampling artifact; the effect is small (3% of cases here) but not zero, and a rerun with more trials per K would be needed to fully correct it.
+
+**The §4-connection question, resolved negatively (beyond the trivial cases).** For each fast-merging residue r found above, checking how many steps r's own trajectory takes to first hit a power of two: the two smallest classes, r=4 (K=3) and r=2 (K=4), hit a power of two in 0 steps — trivially, since 4 and 2 already *are* powers of two. r=5 (K=5) reaches 2^4 in 1 step, consistent with the §4 "exact 2^L" family (5 = `101`₂ is itself an alternating-block number). But every larger-K class checked (r=14, 22, 49, 65, 99, ...) takes 11–23 steps to reach any power of two — no faster or cleaner than a generic number. So the K-clustering is **not** generally explained by §4's mechanism: only the smallest 1–2 classes coincide with it, apparently because the smallest possible residues are close to powers of two by sheer smallness, not because of the §4 mechanism itself. This is consistent with, and sharpens, Addendum §7's separate finding that global trajectory simplicity doesn't predict merge speed — here we see directly that it doesn't explain the K-clustering either.
+
+See `k_cluster_analysis.py` for the full script (self-contained, pure Python, run: `python k_cluster_analysis.py`).
 
 ## Acknowledgments (Addendum)
 
-This addendum was developed collaboratively with an AI assistant (Claude); all code was executed and its output verified before being reported here, including catching and correcting a tautological definition error mid-investigation (§1) and a data-construction bug that initially produced a misleading result (§6). Please independently re-verify before citing.
+This addendum was developed collaboratively with an AI assistant (Claude); all code was executed and its output verified before being reported here, including catching and correcting a tautological definition error mid-investigation (§1) and a data-construction bug that initially produced a misleading result (§6). §10 was added in a later session after discovering the §6–§8 tooling files had been lost (never saved outside that session); its findings were independently re-derived with new code and cross-checked against the exhaustively-verified merging-class data from §5b. Please independently re-verify before citing.
