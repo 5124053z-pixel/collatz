@@ -19,7 +19,9 @@ $$T(n) = \begin{cases} n/2 & n \text{ even} \\ an+b & n \text{ odd.}\end{cases}$
 
 Fix integers $c \ge 1$ and $x$, and consider pairs $(m,\; n = cm + x)$.
 
-Call such a pair **uniformly merging on a set $S$** if $S$ is infinite and there are fixed $\alpha, \beta$ and fixed parity vectors such that, for every $m \in S$, the trajectories of $m$ and of $n = cm+x$ first meet at a common value after exactly $\alpha$ steps from $m$ and $\beta$ steps from $n$, following those same parity vectors. (Concretely: $S$ is a residue class $\bmod 2^k$ on which the merge is "the same merge" for every representative — the situation studied for consecutive integers by Garner and others.)
+Call such a pair **uniformly merging on a set $S$** if $S$ is infinite and there are fixed $\alpha, \beta$ and fixed parity vectors such that, for every $m \in S$,
+$$T^\alpha(m) = T^\beta(cm+x),$$
+with both trajectories following those same fixed parity vectors up to that point. (Concretely: $S$ is a residue class $\bmod 2^k$ on which the merge is "the same merge" for every representative — the situation studied for consecutive integers by Garner and others. Note the merge is not required to be the *first* one; the argument below does not use that.)
 
 **Claim.** If such an $S$ exists, then necessarily
 
@@ -42,13 +44,14 @@ Since $\gcd(a,2)=1$ and $c$ is a positive integer, both exponents are $\ge 0$ (a
 
 **Question.** Is this statement in the literature, in this or an equivalent form? I am looking for a reference rather than a proof.
 
-**What I have already checked.** The $c = 1$, $x = 1$ case is the classical "consecutive integers of equal height" situation, where the claim degenerates to $\beta = \alpha$, and this is exactly the setting of
+**What I have already checked.** The $c = 1$, $x = 1$ case is the classical "consecutive integers of equal height" situation, where the claim degenerates to $\beta = \alpha$. That case is exactly the setting of
 
-* L. E. Garner, *On heights in the Collatz $3n+1$ problem*, Discrete Math. **55** (1985) 57–64,
-* B. LaTourette's senior thesis (the "corresponding stems" / "block prefix" formalism), and
-* M. Elia and A. Tucker, *Consecutive integers and the Collatz conjecture*, INTEGERS **15** (2015), arXiv:1511.09141,
+* L. E. Garner, *On heights in the Collatz $3n+1$ problem*, Discrete Math. **55** (1985) 57–64, which introduces the parity-vector-pair method the argument above uses; and
+* M. Elia and A. Tucker, *Consecutive integers and the Collatz conjecture*, INTEGERS **15** (2015), arXiv:1511.09141.
 
-whose Definition 2 (block prefix, $T_b(x)+1 = T_{b'}(x+1)$) is the $c=1, x=1$ case of the constant-term condition $2^L\gamma = a^{i'}x + \gamma'$ that accompanies the claim above. So the *method* is certainly Garner's. What I have not been able to locate is any statement allowing $c \neq 1$ — i.e. allowing $\alpha \neq \beta$ — and thereby producing the $\beta - \alpha = L-p$ law and the $c = 2^L a^p$ constraint.
+Elia and Tucker's Definition 2 — a *block prefix*, a pair of parity sequences $b, b'$ with $T_b(x) + 1 = T_{b'}(x+1)$ for all $x$, which they attribute to a senior thesis of LaTourette — is precisely the $c = 1, x = 1$ case of the constant-term condition $2^L\gamma = a^{i'}x + \gamma'$ that accompanies the claim above. So the *method* here is certainly Garner's, and the $c=1$ case is well covered.
+
+What I have not been able to locate is any statement allowing $c \neq 1$ — i.e. allowing $\alpha \neq \beta$ — and thereby producing the $\beta - \alpha = L - p$ law and the $c = 2^L a^p$ constraint.
 
 The argument is elementary enough that I would expect it to be known or considered immediate, which is why I am asking for a pointer rather than claiming novelty.
 
@@ -64,6 +67,24 @@ Fallback: if it is closed as too elementary, repost to math.stackexchange with t
 - The "what I have already checked" paragraph is doing most of the work. Collatz attracts a very large volume of low-quality amateur submissions, so demonstrating familiarity with Garner / LaTourette / Elia–Tucker up front is what separates this from that pile.
 - Explicitly disclaiming novelty ("I would expect it to be known") lowers the temperature and makes it easy for someone to just drop a citation.
 
-**Before posting.** If a MathSciNet or zbMATH subscription is available (a university account normally has one), search there rather than relying on web search — that is the actual gate on the "is it known" question, and finding the reference yourself is cheaper than asking. Suggested searches: Collatz/3x+1 combined with *coalescence*, *equal heights*, *total stopping time*, *parity vector*.
+**Citation accuracy.** LaTourette's senior thesis is cited here only as it appears inside Elia & Tucker (whose Definition 2 was read directly), not as a source consulted first-hand — hence the "which they attribute to" phrasing. Do not upgrade that to a direct citation without seeing the thesis. This repository has already had to correct one round of second-hand citation errors (README_extra.md §6); the same care applies here.
+
+**Before posting: search zbMATH Open first.** It is free (no subscription needed) since 2021: <https://zbmath.org>. This is the actual gate on the "is it known" question, and finding the reference yourself is cheaper and more convincing than asking.
+
+*The single most effective move:* look up Garner (1985) in zbMATH, then open its **"Citations"** list. Essentially every paper in this niche cites Garner, so that list is close to a complete survey of the area. Scan it for anything allowing a multiplier other than $c=1$.
+
+Useful query strings (zbMATH syntax: `ti:` title, `ab:` abstract, `any:` anywhere, `cc:` MSC class, `&` = AND):
+
+```
+ti: collatz & ti: height
+any: collatz & any: "parity vector"
+any: "3x+1" & ab: "stopping time"
+ab: coalesc* & any: collatz
+cc: 11B83 & ab: "stopping time"
+```
+
+(`11B83` is the MSC class most Collatz papers land in.)
+
+**Also worth doing while there:** look up Gao, *On consecutive numbers of the same height in the Collatz problem*, Discrete Math. **112** (1993) 261–267. zbMATH entries include a written review, which often states a paper's numerical results — this may settle the separate open question in README_extra.md §19 (whether Gao's density table already shows the increasing trend behind result #6) without needing the paywalled PDF.
 
 **Do not** include the other results from this repository in the same post. One question, one claim.
