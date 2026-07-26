@@ -74,6 +74,10 @@ base_generalization_test.py             §13: control test, generic (non
 power_of_3_test.py                      §13: main finding, c=3^p gives
                                          diff=-p, generalizing the
                                          phenomenon beyond base 2
+power_of_3_merging_classes.py           §13: §5b-style provable merging
+                                         classes for the (m, 3^p*m+x)
+                                         pairing; every class found
+                                         gives exactly diff=-p
 ```
 
 ## 1. Construction
@@ -537,6 +541,16 @@ The original README's §5 left open: *"Does the phenomenon generalize to bases o
 **Mechanism (direct trajectory inspection, same style of evidence as the Addendum's coupling theory):** e.g. for c=9 (p=2), m=15: trajectory of m is `15, 46, 23, 70, 35, 106, 53, 160, 80, 40, ...` (reaches 40 after 9 steps), while the trajectory of `9*15+1=136` is `136, 68, 34, 17, 52, 26, 13, 40, ...` (reaches the *same* value 40 after only 7 steps). Once merged, the rest is identical, so `steps(136) = steps(15) - 2` exactly = −p. The general pattern: `3^p * m + x`'s trajectory literally coalesces into m's own trajectory, but reaches the shared point exactly p steps sooner — the mirror image of the original §3 mechanism (where `2^L * N_k + x`'s trajectory shares a *prefix* with N_k's, adding L steps) rather than merging early.
 
 **Confirms the mechanisms combine additively.** Testing c = 6^p = 2^p·3^p (which bundles both the base-2 "add p steps" mechanism and the base-3 "save p steps" mechanism) gives `diff = 0` as the dominant value at every p tested (1–4) and every bit length — the two effects exactly cancel, as the additive mechanism would predict.
+
+**A §5b-style partial proof: provable merging classes exist for this pairing too.** §5b showed that certain residues r (mod 2^k) provably force n and n+1 to merge at a fixed step-pair, for the classical pairing. The same test applies here to the pairing (m, 3^p·m+x): a residue r (mod 2^k) is a "merging class" if *every* representative m≡r merges with 3^p·m+x at the same fixed (step_from_m, step_from_n). Running this (`power_of_3_merging_classes.py`) for several (p, x):
+
+| p, x | mod 8 | mod 64 | mod 256 | mod 1024 | diff values found |
+|---|---|---|---|---|---|
+| p=1, x=2 | 37.5% | 48.4% | 50.0% | 51.5% | **{−1}** only |
+| p=2, x=1 | 0.0% | 4.7% | 7.4% | 8.9% | **{−2}** only |
+| p=3, x=1 | 0.0% | 0.0% | 0.0% | 0.0% (first class at mod 512) | **{−3}** only |
+
+Every single provable merging class found, at every (p, x, k) tested, gives exactly diff = −p — never any other value. This is the same style of rigorous (if partial) evidence as §5b's theorem: not a full proof for all m, but an actual growing family of residue classes where the −p result is provably exact, not just statistically likely. As with §5b, higher p needs a larger modulus before the first merging class appears (p=1 already has classes at mod 8; p=3 needs mod 512) — consistent with needing more bits of "setup" to force a larger, exact step-savings.
 
 **Second control: other prime powers (5, 7, 11, 13) also show no effect.** To confirm the effect is specific to the primes 2 and 3 (the ones that actually appear in the Collatz map's arithmetic) rather than "any small prime power," the same test was run for c = base^p with base ∈ {5, 7, 11, 13}, p ∈ {1,2,3}, x ∈ {0,1}, 240 samples each (64 and 1024 bits): every single case showed no concentration at all — top values occurring in only 2-5% of trials, indistinguishable from noise, just like the decimal/prime/composite controls above.
 
