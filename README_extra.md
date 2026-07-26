@@ -18,7 +18,7 @@ Later update: §10-13 independently re-verify the Addendum's claims after discov
 
 **Addendum (coupling theory):** [0. Motivation](#0-motivation) · [1. Definitional trap](#1-a-definitional-trap-documented-for-honesty) · [2. Exhaustive result](#2-result-early-merging-appears-to-fully-explain-agreement-at-every-scale-tested) · [3. Tail distribution](#3-coupling-time-distribution-exponential-looking-tail-but-its-a-two-component-mixture) · [4. γ(bits) scaling](#addendum-4-gamma-scaling) · [5. Two-component mixture](#5-resolving-the-mismatch-the-distribution-is-a-two-component-mixture) · [6. Fast component](#6-hypothesis-1-confirmed-the-fast-component-is-explained-by-tiny-scale-independent-residue-classes) · [7. Own trajectory irrelevant](#7-hypothesis-2-mostly-refuted-with-a-clean-positive-finding-instead-ns-own-trajectory-length-is-irrelevant-local-2-adic-structure-is-what-matters) · [9. Summary](#9-summary-established-vs-still-open)
 
-**This session's follow-ups:** [10. K-clustering re-verified](#10-follow-up-2026-07-26-independent-re-verification-a-methodology-caveat-and-the-4-connection-question-resolved-negatively) · [11. Quantile scaling re-verified](#11-follow-up-independent-re-verification-of-the-quantile-scaling-mixture-model-5) · [12. Exhaustive check re-verified](#12-follow-up-independent-re-verification-of-the-exhaustive-2-claim) · [13. NEW: generalizes to powers of 3](#13-new-finding-the-phenomenon-generalizes-to-powers-of-3-answering-the-original-readmes-5-open-question)
+**This session's follow-ups:** [10. K-clustering re-verified](#10-follow-up-2026-07-26-independent-re-verification-a-methodology-caveat-and-the-4-connection-question-resolved-negatively) · [11. Quantile scaling re-verified](#11-follow-up-independent-re-verification-of-the-quantile-scaling-mixture-model-5) · [12. Exhaustive check re-verified](#12-follow-up-independent-re-verification-of-the-exhaustive-2-claim) · [13. NEW: generalizes to powers of 3](#13-new-finding-the-phenomenon-generalizes-to-powers-of-3-answering-the-original-readmes-5-open-question) · [14. NEW: merging-class fraction at larger moduli](#14-follow-up-pushing-13s-merging-class-fraction-to-larger-moduli-does-it-show-the-same-log-type-growth-as-5b)
 
 ## Repository contents
 
@@ -90,6 +90,13 @@ power_of_3_merging_classes.py           §13: §5b-style provable merging
                                          classes for the (m, 3^p*m+x)
                                          pairing; every class found
                                          gives exactly diff=-p
+power_of_3_merging_classes_fast.py      §14: incremental-trajectory +
+                                         multiprocessing version of the
+                                         above, pushed to modulus 2^25
+merging_classes_pow3_fast.c             §14: C+OpenMP port of the above
+                                         (for pushing further/faster than
+                                         pure Python allows)
+results/power_of_3_merging_classes.csv  §14: raw data (p=2,3; k=3..25/23)
 ```
 
 ## 1. Construction
@@ -590,6 +597,48 @@ Every single provable merging class found, at every (p, x, k) tested, gives exac
 **Conclusion.** The phenomenon is not a base-2 peculiarity. It generalizes specifically to multipliers built from the prime factors that appear in the Collatz map's own arithmetic (2 in `n/2`, 3 in `3n+1`) — with base 2 adding L steps and base 3 *removing* p steps — and does not appear for any multiplier unrelated to that arithmetic, including other prime powers with no special relationship to 2 or 3. This resolves the original README's §5 open question about base-generalization, in a more specific and interesting way than a simple yes/no: it isn't "any base b," it's specifically the two primes the map itself is built from.
 
 See `power_of_3_test.py` and `base_generalization_test.py` (self-contained, pure Python).
+
+## 14. Follow-up: pushing §13's merging-class fraction to larger moduli (does it show the same log-type growth as §5b?)
+
+§13's merging-class table for the (m, 3^p·m+x) pairing only went up to modulus 1024. §5b's classical (n, n+1) merging-class fraction was pushed much further (mod up to 2^27) and was found to *not* converge to a stable limit — it kept climbing, with `increment(k) × k` staying close to a constant (≈7.2, drifting slowly *down*) across k=18..27, consistent with logarithmic-type growth `frac(k) ≈ frac(k0) + C·ln(k/k0)`.
+
+This follow-up re-runs §13's experiment (same methodology: a residue r mod 2^k is a merging class if every representative m ≡ r provably merges with 3^p·m+x at the same fixed step pair) at much larger moduli, for p=2 and p=3 (x=1 in both cases), to see whether the same pattern holds.
+
+**Tooling note.** No C/OpenMP toolchain was available in the environment this was run in, so instead of a direct C port, the Python implementation was rewritten to grow both trajectories one step at a time and check for a shared value immediately (instead of building full 300-step trajectories before comparing), combined with multiprocessing across residues (`power_of_3_merging_classes_fast.py`). This was verified to reproduce §13's original mod-8-through-1024 numbers exactly before trusting it further. A direct C/OpenMP port (`merging_classes_pow3_fast.c`, mirroring `merging_classes_fast.c`) is also included for anyone who wants to push this further/faster.
+
+**p=2, x=1** (raw data: `results/power_of_3_merging_classes.csv`):
+
+| k | modulus | merging fraction | increment(k)×k |
+|---|---|---|---|
+| 12 | 4096 | 10.1074% | 7.03 |
+| 14 | 16384 | 11.1938% | 7.35 |
+| 16 | 65536 | 12.1429% | 7.32 |
+| 18 | 262144 | 13.0001% | 7.55 |
+| 20 | 1048576 | 13.7906% | 7.77 |
+| 22 | 4194304 | 14.5317% | 8.02 |
+| 23 | 8388608 | 14.8853% | 8.13 |
+| 24 | 16777216 | 15.2294% | 8.26 |
+| 25 | 33554432 | 15.5643% | 8.37 |
+
+**p=3, x=1**:
+
+| k | modulus | merging fraction | increment(k)×k |
+|---|---|---|---|
+| 12 | 4096 | 1.0742% | 4.10 |
+| 14 | 16384 | 1.7395% | 4.53 |
+| 16 | 65536 | 2.3819% | 5.20 |
+| 18 | 262144 | 3.0289% | 5.86 |
+| 20 | 1048576 | 3.6756% | 6.44 |
+| 22 | 4194304 | 4.3099% | 6.94 |
+| 23 | 8388608 | 4.6217% | 7.17 |
+
+(Every merging class found, at every k, still gives exactly diff = −p, with zero exceptions — reconfirming §13's central claim at a larger scale.)
+
+**This is a different growth pattern than §5b's, not just the same pattern at smaller scale.** For the classical (n, n+1) case, `increment(k)×k` was close to flat and drifting slightly *down* over the k-range tested (18–27). Here, for both p=2 and p=3, `increment(k)×k` is climbing steadily and monotonically over the entire tested range (k=12–25 for p=2, k=12–23 for p=3) — roughly +19% relative growth for p=2 and +75% for p=3 over their respective ranges — with no sign yet of flattening out. p=3's `increment(k)×k` is also growing measurably faster (in relative terms) than p=2's over the same span of k, suggesting the growth-rate itself may depend on p.
+
+**Honest interpretation.** This does not establish a different asymptotic law — the tested range (up to k=23–25) is well short of §5b's k=27, and it remains entirely possible this eventually turns over and flattens the way §5b's did (recall even §5b's "constant" wasn't perfectly flat, just slowly drifting). But at face value, in the range actually computed, the power-of-3 merging-class fraction is *not* exhibiting the same near-logarithmic behavior found for the classical case — it looks more consistent with something growing faster than `ln k` (e.g. `(ln k)^2`, or a slowly-growing power law) than with `increment(k)×k` settling to a constant. Distinguishing between these possibilities, and understanding why p=2 and p=3 would have different growth rates if that holds up, is left as an open question — pushing further (via `merging_classes_pow3_fast.c` on a machine with a C/OpenMP toolchain) would help resolve it.
+
+See `power_of_3_merging_classes_fast.py`, `merging_classes_pow3_fast.c`, `results/power_of_3_merging_classes.csv`.
 
 ## Acknowledgments (Addendum)
 

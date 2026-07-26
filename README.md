@@ -21,6 +21,7 @@ This is not a claim about the Collatz conjecture itself (true/false, cycles, div
 | 7 | Agreement of `steps(n)=steps(n+1)` is fully explained by literal early trajectory coalescence — zero exceptions found anywhere tested | Exhaustive to N=10⁸ (independently re-verified twice), sampled to 65536 bits ([Addendum §2](README_extra.md#2-result-early-merging-appears-to-fully-explain-agreement-at-every-scale-tested), [§12](README_extra.md#12-follow-up-independent-re-verification-of-the-exhaustive-2-claim)) |
 | 8 | The coupling time `tau_couple` is a two-component mixture: an O(1) fast bulk (small residue classes) + a heavy tail scaling ~linearly in bit length (p99 exponent ≈ 0.94) | Independently re-derived, matches original to 2-3 sig figs ([Addendum §5](README_extra.md#5-resolving-the-mismatch-the-distribution-is-a-two-component-mixture), [§11](README_extra.md#11-follow-up-independent-re-verification-of-the-quantile-scaling-mixture-model-5)) |
 | 9 | The phenomenon generalizes to `c=3^p` multipliers: `diff = steps(3^p·m+x) − steps(m)` concentrates on **−p** (mirror image of result #1); combines additively with base 2 (`6^p` gives diff=0); specific to primes 2,3 — other prime powers (5,7,11,13) show no effect | New this session, control-tested, partial proof via merging classes ([§13](README_extra.md#13-new-finding-the-phenomenon-generalizes-to-powers-of-3-answering-the-original-readmes-5-open-question)) |
+| 10 | Result #9's merging-class fraction (like #6/#5b's classical analogue) does not converge to a stable limit as modulus grows; unlike the classical case's near-constant `increment(k)×k`, here it climbs steadily with no sign of flattening in the tested range (k up to 23-25), and p=3 grows measurably faster than p=2 | New this session, pushed to modulus 2^25 (p=2) / 2^23 (p=3) ([§14](README_extra.md#14-follow-up-pushing-13s-merging-class-fraction-to-larger-moduli-does-it-show-the-same-log-type-growth-as-5b)) |
 
 ## Still open
 
@@ -29,14 +30,16 @@ This is not a claim about the Collatz conjecture itself (true/false, cycles, div
 - No proof that zero-exception early-merging holds for *all* n (only verified exhaustively/by sampling to large but finite scales).
 - The −p mechanism for powers of 3 (result #9) is empirically and partially (via merging classes) confirmed but has no closed-form proof analogous to §3's for base 2.
 - Whether other an+b Collatz-like maps (not just the standard 3n+1) show analogous effects — untested.
+- The true asymptotic growth of the power-of-3 merging-class fraction (result #10) is unknown — it doesn't match the classical case's near-logarithmic pattern in the tested range, but whether it's a genuinely different growth law or an eventual-flattening transient is unresolved.
 
 ## Repository contents
 
 ```
 README.md                    this summary
-README_extra.md              full write-up (13 sections + Addendum)
+README_extra.md              full write-up (14 sections + Addendum)
 LICENSE                      MIT
-results/                     raw CSV data from §2 and §1's single-block run
+results/                     raw CSV data from §2, §1's single-block run,
+                              and §14's power-of-3 merging-class sweep
 
 Core (§1-4):
 collatz_block_repeat.py, big_survey.py, exact_power_test.py
@@ -47,10 +50,11 @@ general_merging_test.py, large_scale_sampling.c, coupling_experiment3/4/5.py*,
 coupling_scaling.c*, fit_gamma.py*, fast_slow_test.py*, minimal_K_test.py*,
 hypothesis2_test.py*
 
-§10-13 follow-ups (this session's independent re-verification + new finding):
+§10-14 follow-ups (this session's independent re-verification + new findings):
 k_cluster_analysis.py, quantile_scaling_analysis.py, quantile_scaling_large.py,
 coupling_exhaustive_verify.py, base_generalization_test.py, power_of_3_test.py,
-power_of_3_merging_classes.py
+power_of_3_merging_classes.py, power_of_3_merging_classes_fast.py,
+merging_classes_pow3_fast.c
 
 Unrelated side-quest:
 cycle_search.c               exhaustive Collatz-cycle search, negative result
