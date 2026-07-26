@@ -18,7 +18,7 @@ Later update: §10-13 independently re-verify the Addendum's claims after discov
 
 **Addendum (coupling theory):** [0. Motivation](#0-motivation) · [1. Definitional trap](#1-a-definitional-trap-documented-for-honesty) · [2. Exhaustive result](#2-result-early-merging-appears-to-fully-explain-agreement-at-every-scale-tested) · [3. Tail distribution](#3-coupling-time-distribution-exponential-looking-tail-but-its-a-two-component-mixture) · [4. γ(bits) scaling](#addendum-4-gamma-scaling) · [5. Two-component mixture](#5-resolving-the-mismatch-the-distribution-is-a-two-component-mixture) · [6. Fast component](#6-hypothesis-1-confirmed-the-fast-component-is-explained-by-tiny-scale-independent-residue-classes) · [7. Own trajectory irrelevant](#7-hypothesis-2-mostly-refuted-with-a-clean-positive-finding-instead-ns-own-trajectory-length-is-irrelevant-local-2-adic-structure-is-what-matters) · [9. Summary](#9-summary-established-vs-still-open)
 
-**This session's follow-ups:** [10. K-clustering re-verified](#10-follow-up-2026-07-26-independent-re-verification-a-methodology-caveat-and-the-4-connection-question-resolved-negatively) · [11. Quantile scaling re-verified](#11-follow-up-independent-re-verification-of-the-quantile-scaling-mixture-model-5) · [12. Exhaustive check re-verified](#12-follow-up-independent-re-verification-of-the-exhaustive-2-claim) · [13. NEW: generalizes to powers of 3](#13-new-finding-the-phenomenon-generalizes-to-powers-of-3-answering-the-original-readmes-5-open-question) · [14. NEW: merging-class fraction at larger moduli](#14-follow-up-pushing-13s-merging-class-fraction-to-larger-moduli-does-it-show-the-same-log-type-growth-as-5b) · [15. NEW: proof that the diff value is forced](#15-a-proof-that-the-diff-value-is-forced-one-argument-explaining-5a-13-and-the-6p-case) · [16. NEW: why only primes 2,3 + literature placement](#16-consequences-of-15-why-only-the-primes-2-and-3-and-where-this-sits-in-the-literature) · [17. NEW: proof for §4's alternating family](#17-filling-the-gap-in-4-a-proof-that-the-alternating-family-actually-gives-diff--l) · [18. NEW: generalizes to every an+b map](#18-the-whole-thing-was-never-about-3-generalization-to-every-anb-map) · [19. NEW: §5d vs §14 — the log law must break](#19-cross-checking-5d-against-5b14-the-log-growth-law-provably-breaks-down)
+**This session's follow-ups:** [10. K-clustering re-verified](#10-follow-up-2026-07-26-independent-re-verification-a-methodology-caveat-and-the-4-connection-question-resolved-negatively) · [11. Quantile scaling re-verified](#11-follow-up-independent-re-verification-of-the-quantile-scaling-mixture-model-5) · [12. Exhaustive check re-verified](#12-follow-up-independent-re-verification-of-the-exhaustive-2-claim) · [13. NEW: generalizes to powers of 3](#13-new-finding-the-phenomenon-generalizes-to-powers-of-3-answering-the-original-readmes-5-open-question) · [14. NEW: merging-class fraction at larger moduli](#14-follow-up-pushing-13s-merging-class-fraction-to-larger-moduli-does-it-show-the-same-log-type-growth-as-5b) · [15. NEW: proof that the diff value is forced](#15-a-proof-that-the-diff-value-is-forced-one-argument-explaining-5a-13-and-the-6p-case) · [16. NEW: why only primes 2,3 + literature placement](#16-consequences-of-15-why-only-the-primes-2-and-3-and-where-this-sits-in-the-literature) · [17. NEW: proof for §4's alternating family](#17-filling-the-gap-in-4-a-proof-that-the-alternating-family-actually-gives-diff--l) · [18. NEW: generalizes to every an+b map](#18-the-whole-thing-was-never-about-3-generalization-to-every-anb-map) · [19. NEW: §5d vs §14 — the log law must break](#19-cross-checking-5d-against-5b14-the-log-growth-law-provably-breaks-down) · [20. NEW: Addendum §2 retracted as tautology](#20-audit-addendum-2s-100-early-merge-zero-exceptions-is-a-tautology-third-instance-of-the-same-trap)
 
 ## Repository contents
 
@@ -378,6 +378,8 @@ A second version fixed the cycling issue but capped the search at `steps(n) + sm
 
 ## 2. Result: early merging appears to fully explain agreement, at every scale tested
 
+> **⚠ RETRACTED as a finding (see [§20](#20-audit-addendum-2s-100-early-merge-zero-exceptions-is-a-tautology-third-instance-of-the-same-trap)).** The 100% / zero-exception result below is **forced**: if `steps(n) = steps(n+1) = s` then both trajectories are at the value 2 at step `s−1`, since 2 is the only positive preimage of 1 — so a strict early merge in `[1, s)` always exists. This is the *third* instance of the definitional trap §1 documents, escaping the second fix by exactly one step. The tables below are correct but could not have come out otherwise. The equivalence claimed at the end of this section is a two-line theorem, not a discovery, and it does **not** settle §0's question about "provable vs coincidental" agreement. What survives is the *distribution* of `tau_couple` (§3–§5), which is not forced — observed merges occur around `0.12·s`, far earlier than the guaranteed one.
+
 **Exhaustive check** (Python), `n = 1 .. N`, computing `steps(n)`, `steps(n+1)`, and (when they agree) searching for a strict early merge:
 
 | N | agreeing pairs | early-merge fraction | exceptions |
@@ -567,6 +569,8 @@ Unlike §5b–§5d, the Addendum's §2 exhaustive table (N=1e6/5e6/15e6/60e6, 10
 | 100,000,000 | 51,242,281 | *(new — extends past the original's largest tested N)* | 100.0000% | 0 | 4m20s |
 
 Every single agreeing-pair count from the original (lost-code) table matches **exactly**, digit for digit, and the zero-exceptions / 100.0000% early-merge result reproduces cleanly at every scale, including the new N=100,000,000 point which goes beyond anything in the original table. This closes the biggest provenance gap left by the lost tooling: §2's central claim is no longer resting on unreproducible code, and now has independent exhaustive verification to a new high-water mark of N=10^8.
+
+> **⚠ Correction (see [§20](#20-audit-addendum-2s-100-early-merge-zero-exceptions-is-a-tautology-third-instance-of-the-same-trap)).** The *agreeing-pair counts* above are meaningful and their exact digit-for-digit match with the lost original is a real provenance result — that part stands. But the "100.0000% early-merge, 0 exceptions" columns verify a tautology: a strict early merge is forced to exist at step `s−1` for every agreeing pair. Re-verifying it at a larger `N` could not have detected the problem, which is precisely the trap — the right response to an exact-100% reading is an attempted proof, not a larger run.
 
 See `coupling_exhaustive_verify.py` (self-contained, pure Python, memoized; run: `python coupling_exhaustive_verify.py <N>`).
 
@@ -966,6 +970,58 @@ Separately from the above: **§5d's core observation may not be new, and this ne
 **Action required:** obtain Gao (1993) through an institutional subscription and check whether its density table already establishes the increasing trend. Note that this repo already cites Gao 1993 (in §5a's correction) but only for the general "clustering" phenomenon, apparently without anyone having examined this particular table. If the lead is confirmed, §5d should be relabelled as independent rediscovery in the same manner as §5b — with the caveat that §5d's *scale* (sampling out to ~10^27000, reaching 98%) still goes far beyond Gao's `10⁸`, where the density had only just passed 0.5, so the stronger claim "it approaches 100%" may survive even if "it increases" does not.
 
 Also worth checking: *Computing streaks of consecutive numbers with the same Collatz height*, **J. Supercomputing** (2025), doi:10.1007/s11227-025-07820-8 — recent work in exactly this area, likewise paywalled and unexamined here.
+
+## 20. Audit: Addendum §2's "100% early merge, zero exceptions" is a tautology (third instance of the same trap)
+
+Addendum §1 is titled "A definitional trap (documented for honesty)" and records two versions of `tau_couple` that were caught and discarded — one that let the map cycle past 1, and one capped at `steps(n)` which made a merge "guaranteed to be found by time `s`." The third, corrected definition searches `t ∈ [1, s)`, strictly before either trajectory reaches 1.
+
+**That definition does not escape the trap either.** The result reported under it — 100.0000% early-merge fraction with zero exceptions across ~30.5 million exhaustively-checked pairs and every sampled bit-length window — is forced, and carries no information.
+
+### The two-line argument
+
+Suppose `steps(n) = steps(n+1) = s`, so `T^s(n) = T^s(n+1) = 1`.
+
+The only positive integer mapping to 1 under `T` is 2: the even branch gives `T(2) = 1`, and the odd branch would need `3k + 1 = 1`, which has no positive solution. Therefore
+
+```
+T^(s−1)(n) = 2 = T^(s−1)(n+1)
+```
+
+is forced. And `s−1` lies in the searched range `[1, s)`, with neither trajectory having reached 1 yet. So a "strict early merge" **always exists**, for every agreeing pair, at `t = s−1` at the latest.
+
+The converse is equally immediate: if the trajectories agree at any `t < s` they coincide from `t` onward and so finish together. Hence the stated equivalence
+
+```
+steps(n) = steps(n+1)   ⟺   tau_couple(n) < steps(n)
+```
+
+is a theorem with a two-line proof, not an empirical discovery — and the exhaustive verification of ~30.5 million pairs verified something that could not have come out any other way.
+
+### Confirmed
+
+`addendum2_tautology_check.py`, over `n ≤ 200,000` (91,938 agreeing pairs):
+
+```
+both at value 2 at step s-1:      91938  (100.0000%)
+```
+
+Exactly as forced.
+
+### What survives, and what does not
+
+**Does not survive.** README.md's result #7 as stated — "agreement is *fully explained* by literal early trajectory coalescence — zero exceptions found anywhere tested" — is not a finding. The zero-exception count was guaranteed. The word "explained" is also doing no work: the equivalence is definitional, so it cannot distinguish "provable merging" from "coincidental agreement", which was the entire question Addendum §0 set out to answer. Addendum §2's closing claim that this "collapses §5c's distinction into a single mechanism" is therefore also void — the distinction is not collapsed, it is simply not addressed by this test.
+
+**Does survive, and is worth more than the headline was.** The *distribution* of `tau_couple` is not forced. The forced merge sits at `t = s−1`; the observed first merges happen far earlier. Measured here:
+
+```
+mean tau / mean s  =  0.1207
+```
+
+i.e. agreeing pairs typically coalesce about an eighth of the way through their trajectory, not at the end where the tautology guarantees it. That is a genuine, non-trivial fact, and it is what Addendum §3–§5 (the two-component mixture, the quantile scaling, result #8) actually study. Those sections are unaffected by this audit; if anything they become the real content of the Addendum rather than a follow-up to its headline.
+
+### Why this was missed twice
+
+Both previously-caught versions failed *loudly* — they produced a 100% reading that was obviously suspicious. This version fails by exactly one step, and produces the same 100% reading. The lesson recorded here for future work: when a measured quantity comes out at exactly 100.0000% with zero exceptions across tens of millions of trials, the first hypothesis should be that it is forced, and the check should be an attempt to prove it rather than an extension to a larger `N`. This repo ran the extension (§12 independently re-verified the claim at larger scale, and naturally also found 100%) without running the proof.
 
 ## Acknowledgments (Addendum)
 
