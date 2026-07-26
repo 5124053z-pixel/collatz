@@ -18,7 +18,7 @@ Later update: §10-13 independently re-verify the Addendum's claims after discov
 
 **Addendum (coupling theory):** [0. Motivation](#0-motivation) · [1. Definitional trap](#1-a-definitional-trap-documented-for-honesty) · [2. Exhaustive result](#2-result-early-merging-appears-to-fully-explain-agreement-at-every-scale-tested) · [3. Tail distribution](#3-coupling-time-distribution-exponential-looking-tail-but-its-a-two-component-mixture) · [4. γ(bits) scaling](#addendum-4-gamma-scaling) · [5. Two-component mixture](#5-resolving-the-mismatch-the-distribution-is-a-two-component-mixture) · [6. Fast component](#6-hypothesis-1-confirmed-the-fast-component-is-explained-by-tiny-scale-independent-residue-classes) · [7. Own trajectory irrelevant](#7-hypothesis-2-mostly-refuted-with-a-clean-positive-finding-instead-ns-own-trajectory-length-is-irrelevant-local-2-adic-structure-is-what-matters) · [9. Summary](#9-summary-established-vs-still-open)
 
-**This session's follow-ups:** [10. K-clustering re-verified](#10-follow-up-2026-07-26-independent-re-verification-a-methodology-caveat-and-the-4-connection-question-resolved-negatively) · [11. Quantile scaling re-verified](#11-follow-up-independent-re-verification-of-the-quantile-scaling-mixture-model-5) · [12. Exhaustive check re-verified](#12-follow-up-independent-re-verification-of-the-exhaustive-2-claim) · [13. NEW: generalizes to powers of 3](#13-new-finding-the-phenomenon-generalizes-to-powers-of-3-answering-the-original-readmes-5-open-question) · [14. NEW: merging-class fraction at larger moduli](#14-follow-up-pushing-13s-merging-class-fraction-to-larger-moduli-does-it-show-the-same-log-type-growth-as-5b) · [15. NEW: proof that the diff value is forced](#15-a-proof-that-the-diff-value-is-forced-one-argument-explaining-5a-13-and-the-6p-case)
+**This session's follow-ups:** [10. K-clustering re-verified](#10-follow-up-2026-07-26-independent-re-verification-a-methodology-caveat-and-the-4-connection-question-resolved-negatively) · [11. Quantile scaling re-verified](#11-follow-up-independent-re-verification-of-the-quantile-scaling-mixture-model-5) · [12. Exhaustive check re-verified](#12-follow-up-independent-re-verification-of-the-exhaustive-2-claim) · [13. NEW: generalizes to powers of 3](#13-new-finding-the-phenomenon-generalizes-to-powers-of-3-answering-the-original-readmes-5-open-question) · [14. NEW: merging-class fraction at larger moduli](#14-follow-up-pushing-13s-merging-class-fraction-to-larger-moduli-does-it-show-the-same-log-type-growth-as-5b) · [15. NEW: proof that the diff value is forced](#15-a-proof-that-the-diff-value-is-forced-one-argument-explaining-5a-13-and-the-6p-case) · [16. NEW: why only primes 2,3 + literature placement](#16-consequences-of-15-why-only-the-primes-2-and-3-and-where-this-sits-in-the-literature)
 
 ## Repository contents
 
@@ -713,6 +713,68 @@ Since everything after the merge point is identical, `steps(n) − steps(m) = β
 **Relation to the Collatz conjecture: none.** This says nothing about whether trajectories terminate, whether nontrivial cycles exist, or anything else bearing on the conjecture. It is a statement about the *relative* stopping times of two numbers that happen to merge, and is vacuous if either trajectory fails to terminate.
 
 Verified computationally in `merge_diff_theorem_verify.py`: both identities (`i = i'+p` and `α−i = β−i'−L`) checked against every merging class found by brute force for five different `(L, p, x)` combinations — 315 classes total, zero violations.
+
+## 16. Consequences of §15: why only the primes 2 and 3, and where this sits in the literature
+
+§15's coefficient-matching argument has two immediate consequences that resolve further empirical findings of this repo, and a literature check places the whole merging-class line of work more precisely than §6 did. No new computation is involved in this section — everything follows from §15 or from reading the existing literature.
+
+### 16a. Corollary: the multiplier must be 3-smooth (this proves §13's control results)
+
+§15 fixed `c = 2^L·3^p` in advance. But the argument actually *determines* which multipliers are possible. Matching the coefficient of `m`:
+
+```
+3^i / 2^(α−i)  =  3^i' · c / 2^(β−i')
+⟹  c = 3^(i−i') · 2^((β−i') − (α−i))
+```
+
+Write `a = i − i'` and `b = (β−i') − (α−i)`; these are integers but *a priori* could be negative. They cannot be:
+
+- If `a < 0`, then `c·3^|a| = 2^b`, whose right side is a power of 2 and is never divisible by 3 — contradiction.
+- If `b < 0`, then `c·2^|b| = 3^a`, whose left side is even and right side odd — contradiction.
+
+So `a, b ≥ 0` and:
+
+> **Corollary.** Uniform (fixed-parity) merging between `m` and `c·m + x` is possible **only if `c` is 3-smooth**, i.e. `c = 2^L·3^p` for some `L, p ≥ 0`. For any `c` divisible by a prime other than 2 or 3, no merging class exists at all.
+
+**This proves §13's control experiments.** §13 tested `c = 5^p, 7^p, 11^p, 13^p` (p=1,2,3), `c = 10^3, 10^4`, `c = 1000003` (prime), and `c = 12345`, and found in every case "no concentration at all — top values occurring in only 2-5% of trials, indistinguishable from noise." Every one of those multipliers has a prime factor outside `{2, 3}` (note `10^3 = 2^3·5^3`, `12345 = 3·5·823`), so by the corollary the algebraic merging mechanism is *structurally unavailable* for them — not merely unobserved at the scales tested. Whatever residual agreement those controls showed must be coincidental rather than mechanism-driven, which is exactly what "indistinguishable from noise" looks like.
+
+This also sharpens §13's conclusion. §13 said the effect is "specific to the primes that appear in the Collatz map's own arithmetic (2 in `n/2`, 3 in `3n+1`)," which reads as a suggestive resonance. The real reason is harder-edged: the map's iterates are affine with coefficient `3^i/2^h`, so only `3`s and `2`s are ever available to match against `c`, and unique factorization does the rest.
+
+### 16b. Corollary: the diff value does not depend on the offset x
+
+The coefficient matching in §15 involves only the coefficient of `m`; the offset `x` sits entirely in the constant term. Hence `diff = L − p` regardless of `x`.
+
+This explains another item in §13's table that was reported without comment: `p=1, x=0` and `p=1, x=2` both concentrate on `−1`, and the various `x` values tested at each `p` all give the same dominant value. That is forced, not coincidental. (What `x` *does* affect is whether a merging class exists at all, and how large a modulus is needed to find one — see §16c.)
+
+### 16c. The frequency question, stated precisely
+
+§15 explicitly does not address *whether* merging happens — the repo's genuinely open problem. That question can at least be written down exactly. Carrying the constant terms through §15's computation (using `i = i'+p` and `β−i' = L + (α−i)`) gives:
+
+```
+2^L · γ  =  3^i' · x + γ'
+```
+
+where `γ, γ'` are the affine constants attached to the two parity vectors. So:
+
+> A merging class for `(m, 2^L·3^p·m + x)` exists precisely when there is a pair of parity vectors — one with `i'+p` odd-steps, the other with `i'`, of lengths related by `β−i' = L+α−i` — whose affine constants satisfy `2^L·γ = 3^i'·x + γ'`.
+
+This converts "how often do trajectories merge?" into a concrete counting problem over pairs of parity vectors subject to one Diophantine condition. It does not solve it. But it makes clear why §14's measured growth rates are hard to pin down: they are counting solutions of an exponential Diophantine condition, not something with an obvious closed form.
+
+Sanity check against the literature: for `c = 1` (`L = p = 0`) and `x = 1` — the classical consecutive-integer case — the condition collapses to `γ = γ' + 1`, which is exactly LaTourette's "block prefix" condition (`T_b(x) + 1 = T_b'(x+1)`) used by Garner and by Elia & Tucker. So the general condition above is a genuine generalization of the known one, and reduces to it correctly.
+
+### 16d. Literature placement (updating §6)
+
+A further literature check (2026-07-26) locates this repo's merging-class work more precisely than §6 did:
+
+- **L. E. Garner, "On heights in the Collatz 3n+1 problem,"** *Discrete Math.* **55** (1985) 57–64. Establishes the consecutive-integer merging results (already credited in §5b/§6) and introduces the parity-vector-pair method: to a merging pair he associates a pair of 0-1 vectors, with "stems" and "blocks" that concatenate to generate new admissible pairs. **This is the same method §15 uses**, specialized to `c = 1`.
+- **B. LaTourette** (senior thesis) formalized "corresponding stems" and "block prefix"; the block-prefix condition is the `c=1, x=1` case of §16c's condition.
+- **M. Elia and A. Tucker, "Consecutive integers and the Collatz conjecture,"** *INTEGERS* **15** (2015), arXiv:1511.09141. Their Theorem 2.1 is, with the identical proof, the same statement as §5b's theorem — further confirming §5b's correction. **More importantly, their main result (Theorem 4.1) constructs infinitely many counterexamples to Garner's conjecture** that all corresponding stems take the form `s_i, s̄_i`.
+
+That last point is directly relevant to §14's open question. §14 measured the merging-class fraction and found it does not settle into the clean logarithmic pattern §5b saw, and left the asymptotics open. The literature says the underlying classification problem is *known* to be more complicated than the natural guess: Garner's proposed classification of merging pairs has been disproven. So the absence of a clean asymptotic in §14's data is consistent with a genuinely complicated underlying structure, rather than with insufficient computation.
+
+**Revised assessment of what is and isn't new here.** The method (parity-vector pairs), the `c=1` results (Garner, Elia–Tucker), and the affine expansion lemma (Terras 1976; standard, sometimes called the Affine Expansion Lemma) are all established. What this repo appears to add is the extension from `c = 1` to general multipliers `c = 2^L·3^p` — the classical literature treats `(n, n+1)`, where `α = β` and `diff = 0`, whereas allowing `c ≠ 1` forces `α ≠ β` and produces the `diff = L − p` family, together with the 3-smoothness constraint of §16a. Given how elementary the argument is, and given this repo's track record of independently re-deriving known results, **the appropriate default remains that this too may be known somewhere not yet found.** It is recorded here because it explains this repo's own data, not as a priority claim.
+
+**Relation to the Collatz conjecture: still none.** §16a says which multipliers admit the mechanism; §16c says when it fires. Neither says anything about whether any trajectory terminates.
 
 ## Acknowledgments (Addendum)
 
