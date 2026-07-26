@@ -1,4 +1,6 @@
-# Self-Similar Digit Blocks and Collatz Total Stopping Time
+# Self-Similar Digit Blocks and Collatz Total Stopping Time (full write-up)
+
+**This is the full, detailed write-up.** For a short summary — established results, open questions, repo layout — see [README.md](README.md). This file has everything: every table, the coupling-theory Addendum, the honest record of mistakes made and corrected along the way, and the newest (§13) power-of-3 generalization.
 
 Status: amateur/independent investigation, computationally verified, not peer-reviewed. TL;DR: Repeatedly prepending a fixed bit-block to a number causes the Collatz total stopping time to increase by an amount that converges — with probability approaching 1 — to exactly the block's own bit length. A specific family of blocks (those satisfying 3·(x/2)+1 = 2^L) makes this convergence exactly 100% from the very first iteration.
 
@@ -7,6 +9,16 @@ This is not a claim about the Collatz conjecture itself (true/false, cycles, div
 Update: this investigation led to a bigger and more surprising finding than the original construction — see §5d. The well-known claim that "about half" of consecutive integers n, n+1 share the same Collatz total stopping time (OEIS A006577) appears, based on sampling out to n ~ 10^27000, to be a small-n snapshot of a quantity climbing steadily toward 100%, not a stable ~50% limit.
 
 Further update: an Addendum (below) reframes §5's open questions using coupling theory (coalescing Markov chains) and reports new computational findings, including corrections of two errors made mid-investigation. See the Addendum section at the end of this document.
+
+Later update: §10-13 independently re-verify the Addendum's claims after discovering some of its source files had been lost, and §13 reports a new finding (generalization to powers of 3) that answers one of the original §5's open questions.
+
+## Table of contents
+
+**Main investigation:** [1. Construction](#1-construction) · [2. Main finding](#2-main-empirical-finding) · [3. Proof sketch](#3-why-this-happens-proved-part) · [4. The 100%-clean family](#4-the-100-clean-family) · [5. Open questions](#5-open-questions) ([5a](#5a-generalization-the-self-similarity-turns-out-not-to-matter) · [5b](#5b-a-proved-partial-result-for-the-l1-base-case) · [5c](#5c-synthesis-its-all-about-how-simple-xs-own-trajectory-is) · [5d](#5d-the-classical-50-is-not-the-limit--it-approaches-100)) · [6. Existing theory](#6-relation-to-existing-theory) · [7. Reproducing](#7-reproducing-this) · [8. Caveats](#8-caveats)
+
+**Addendum (coupling theory):** [0. Motivation](#0-motivation) · [1. Definitional trap](#1-a-definitional-trap-documented-for-honesty) · [2. Exhaustive result](#2-result-early-merging-appears-to-fully-explain-agreement-at-every-scale-tested) · [3. Tail distribution](#3-coupling-time-distribution-exponential-looking-tail-but-its-a-two-component-mixture) · [4. γ(bits) scaling](#addendum-4-gamma-scaling) · [5. Two-component mixture](#5-resolving-the-mismatch-the-distribution-is-a-two-component-mixture) · [6. Fast component](#6-hypothesis-1-confirmed-the-fast-component-is-explained-by-tiny-scale-independent-residue-classes) · [7. Own trajectory irrelevant](#7-hypothesis-2-mostly-refuted-with-a-clean-positive-finding-instead-ns-own-trajectory-length-is-irrelevant-local-2-adic-structure-is-what-matters) · [9. Summary](#9-summary-established-vs-still-open)
+
+**This session's follow-ups:** [10. K-clustering re-verified](#10-follow-up-2026-07-26-independent-re-verification-a-methodology-caveat-and-the-4-connection-question-resolved-negatively) · [11. Quantile scaling re-verified](#11-follow-up-independent-re-verification-of-the-quantile-scaling-mixture-model-5) · [12. Exhaustive check re-verified](#12-follow-up-independent-re-verification-of-the-exhaustive-2-claim) · [13. NEW: generalizes to powers of 3](#13-new-finding-the-phenomenon-generalizes-to-powers-of-3-answering-the-original-readmes-5-open-question)
 
 ## Repository contents
 
@@ -357,6 +369,7 @@ i.e. agreement of total stopping times appears *equivalent* to (not just partial
 
 Conditional on early merging, a naive single-exponential fit to `P(tau_couple > t | merged)` looks clean at fixed small scale (N=300,000: γ≈0.0421, R²=0.9987), with minimum observed merge time 3 (matching the §5b theorem exactly). But this single-exponential picture turns out to be too simple — see §5.
 
+<a id="addendum-4-gamma-scaling"></a>
 ## 4. γ(bits) scaling: roughly γ ∝ 1/bits, but with a caveat
 
 Fitting the tail decay rate γ per bit-length window (log-linear regression on the survival function, windows 32–65536 bits):
