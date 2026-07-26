@@ -18,7 +18,7 @@ Later update: §10-13 independently re-verify the Addendum's claims after discov
 
 **Addendum (coupling theory):** [0. Motivation](#0-motivation) · [1. Definitional trap](#1-a-definitional-trap-documented-for-honesty) · [2. Exhaustive result](#2-result-early-merging-appears-to-fully-explain-agreement-at-every-scale-tested) · [3. Tail distribution](#3-coupling-time-distribution-exponential-looking-tail-but-its-a-two-component-mixture) · [4. γ(bits) scaling](#addendum-4-gamma-scaling) · [5. Two-component mixture](#5-resolving-the-mismatch-the-distribution-is-a-two-component-mixture) · [6. Fast component](#6-hypothesis-1-confirmed-the-fast-component-is-explained-by-tiny-scale-independent-residue-classes) · [7. Own trajectory irrelevant](#7-hypothesis-2-mostly-refuted-with-a-clean-positive-finding-instead-ns-own-trajectory-length-is-irrelevant-local-2-adic-structure-is-what-matters) · [9. Summary](#9-summary-established-vs-still-open)
 
-**This session's follow-ups:** [10. K-clustering re-verified](#10-follow-up-2026-07-26-independent-re-verification-a-methodology-caveat-and-the-4-connection-question-resolved-negatively) · [11. Quantile scaling re-verified](#11-follow-up-independent-re-verification-of-the-quantile-scaling-mixture-model-5) · [12. Exhaustive check re-verified](#12-follow-up-independent-re-verification-of-the-exhaustive-2-claim) · [13. NEW: generalizes to powers of 3](#13-new-finding-the-phenomenon-generalizes-to-powers-of-3-answering-the-original-readmes-5-open-question) · [14. NEW: merging-class fraction at larger moduli](#14-follow-up-pushing-13s-merging-class-fraction-to-larger-moduli-does-it-show-the-same-log-type-growth-as-5b)
+**This session's follow-ups:** [10. K-clustering re-verified](#10-follow-up-2026-07-26-independent-re-verification-a-methodology-caveat-and-the-4-connection-question-resolved-negatively) · [11. Quantile scaling re-verified](#11-follow-up-independent-re-verification-of-the-quantile-scaling-mixture-model-5) · [12. Exhaustive check re-verified](#12-follow-up-independent-re-verification-of-the-exhaustive-2-claim) · [13. NEW: generalizes to powers of 3](#13-new-finding-the-phenomenon-generalizes-to-powers-of-3-answering-the-original-readmes-5-open-question) · [14. NEW: merging-class fraction at larger moduli](#14-follow-up-pushing-13s-merging-class-fraction-to-larger-moduli-does-it-show-the-same-log-type-growth-as-5b) · [15. NEW: proof that the diff value is forced](#15-a-proof-that-the-diff-value-is-forced-one-argument-explaining-5a-13-and-the-6p-case)
 
 ## Repository contents
 
@@ -97,6 +97,10 @@ merging_classes_pow3_fast.c             §14: C+OpenMP port of the above
                                          (for pushing further/faster than
                                          pure Python allows)
 results/power_of_3_merging_classes.csv  §14: raw data (p=2,3; k=3..25/23)
+merge_diff_theorem_verify.py            §15: verifies the coefficient-
+                                         matching theorem forcing
+                                         diff = L-p, across base-2,
+                                         base-3 and mixed 6^p pairings
 ```
 
 ## 1. Construction
@@ -639,6 +643,76 @@ This follow-up re-runs §13's experiment (same methodology: a residue r mod 2^k 
 **Honest interpretation.** This does not establish a different asymptotic law — the tested range (up to k=23–25) is well short of §5b's k=27, and it remains entirely possible this eventually turns over and flattens the way §5b's did (recall even §5b's "constant" wasn't perfectly flat, just slowly drifting). But at face value, in the range actually computed, the power-of-3 merging-class fraction is *not* exhibiting the same near-logarithmic behavior found for the classical case — it looks more consistent with something growing faster than `ln k` (e.g. `(ln k)^2`, or a slowly-growing power law) than with `increment(k)×k` settling to a constant. Distinguishing between these possibilities, and understanding why p=2 and p=3 would have different growth rates if that holds up, is left as an open question — pushing further (via `merging_classes_pow3_fast.c` on a machine with a C/OpenMP toolchain) would help resolve it.
 
 See `power_of_3_merging_classes_fast.py`, `merging_classes_pow3_fast.c`, `results/power_of_3_merging_classes.csv`.
+
+## 15. A proof that the diff value is forced: one argument explaining §5a, §13, and the 6^p case
+
+Everything above treats the *value* of `diff` as an empirical observation: §5a/§2 observed `diff = +L` for the base-2 pairing, §13 observed `diff = −p` for the power-of-3 pairing and `diff = 0` for the mixed `6^p` case, and §13/§14 noted with some surprise that *every merging class found, at every modulus, gave exactly `−p` and never any other value*. That last observation was stated as a striking empirical regularity across hundreds of thousands of classes.
+
+It turns out this is provable in a few lines, and the same argument covers all three cases at once.
+
+### Setup
+
+Fix `c = 2^L · 3^p` (so `L=0, p≥1` is §13's case, `p=0, L≥1` is §5a's, and `L=p` is the `6^p` case) and an offset `x`. Consider the pairing `m ↦ n = c·m + x`.
+
+Recall the standard fact (Terras 1976; see also Bernstein & Lagarias 1996) that **once the parity vector is fixed, the Collatz map is affine**: if a trajectory takes `α` steps of which exactly `i` are odd-steps, then the value reached is
+
+```
+(3^i · m + γ) / 2^(α−i)
+```
+
+for an integer constant `γ` depending only on the parity vector, not on `m`.
+
+### Theorem
+
+*Let `S` be an infinite set of integers `m` on which the pairing `(m, n = c·m + x)` merges "uniformly": both trajectories reach a common value, after a fixed number `α` of steps from `m` and a fixed number `β` from `n`, with fixed parity vectors (in particular fixed odd-step counts `i` from `m` and `i'` from `n`), the same for all `m ∈ S`. Then*
+
+```
+β − α = L − p
+```
+
+*necessarily. In particular the difference in total stopping times is exactly `L − p`, and no other value is possible.*
+
+**Proof.** Write the common merge value `V` from both sides. From `m`'s side:
+
+```
+V = (3^i · m + γ) / 2^(α−i)
+```
+
+From `n`'s side, substituting `n = 2^L·3^p·m + x`:
+
+```
+V = (3^i' · n + γ') / 2^(β−i')
+  = (3^(i'+p) · 2^L · m + 3^i'·x + γ') / 2^(β−i')
+```
+
+Both are affine functions of `m` that agree for infinitely many `m` (all of `S`), so their coefficients must be equal. Comparing the coefficient of `m`:
+
+```
+3^i / 2^(α−i)  =  3^(i'+p) · 2^L / 2^(β−i')
+```
+
+By unique factorization, matching powers of 3 and of 2 separately:
+
+```
+i = i' + p                    (powers of 3)
+α − i = β − i' − L            (powers of 2)
+```
+
+Subtracting the first from the second and rearranging: `α − p = β − L`, i.e. `β − α = L − p`. ∎
+
+Since everything after the merge point is identical, `steps(n) − steps(m) = β − α = L − p` exactly (whenever both are defined). ∎
+
+### What this does and does not explain
+
+**Explained.** Why `diff` is *always* exactly `+L` (base 2), `−p` (base 3), or `L−p` (mixed), and never any nearby value. This was previously the repo's most-repeated unexplained regularity — §13 flagged "every single provable merging class found, at every (p, x, k) tested, gives exactly diff = −p — never any other value" as a notable empirical fact. It is now a theorem, and the mechanism is transparent: the multiplier `3^p` contributes exactly `p` extra odd-steps to `m`'s path that `n` skips, and `2^L` contributes exactly `L` extra halvings. The additive combination for `6^p` (§13) is immediate from the formula, rather than a separate empirical finding.
+
+**Not explained — and this is the hard part that remains fully open.** The theorem is conditional on a merge happening with fixed parity structure. It says nothing about *whether* or *how often* that occurs. All of the genuinely difficult questions in this repo — why the merging-class fraction grows the way §5b/§14 measured, why raw agreement climbs toward 100% (§5d), why the coupling-time distribution is a two-component mixture (Addendum §5) — are questions about the *frequency* of merging, and this argument does not touch them.
+
+**Provenance caveat (important).** Every ingredient here is textbook: the affine form of the Collatz map on a fixed parity vector is standard (Terras 1976; Bernstein & Lagarias 1996), and the argument is four lines of coefficient matching. A literature search (2026-07-26) did not turn up this specific statement, but given how elementary it is, the far more likely explanation is that it is known folklore or considered too immediate to state, not that it is new. **Given this repo's track record — §5b was independently re-derived and later found to be Garner (1985) — the appropriate default assumption is that this is also known.** It is written up here because it genuinely explains this repo's own observations, not as a novelty claim.
+
+**Relation to the Collatz conjecture: none.** This says nothing about whether trajectories terminate, whether nontrivial cycles exist, or anything else bearing on the conjecture. It is a statement about the *relative* stopping times of two numbers that happen to merge, and is vacuous if either trajectory fails to terminate.
+
+Verified computationally in `merge_diff_theorem_verify.py`: both identities (`i = i'+p` and `α−i = β−i'−L`) checked against every merging class found by brute force for five different `(L, p, x)` combinations — 315 classes total, zero violations.
 
 ## Acknowledgments (Addendum)
 

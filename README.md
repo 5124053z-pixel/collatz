@@ -6,7 +6,7 @@ Status: amateur/independent investigation, computationally verified, not peer-re
 
 This is not a claim about the Collatz conjecture itself (true/false, cycles, divergent trajectories). It is a set of concrete, checkable statements about specific number families and about the statistics of the total stopping time function.
 
-**This file is a short summary.** The full investigation — every table, the coupling-theory Addendum, the honest record of mistakes made and corrected along the way, and the newest power-of-3 generalization — is in **[README_extra.md](README_extra.md)**, organized into 13 sections + Addendum. This file exists so a new reader isn't faced with 500+ lines up front.
+**This file is a short summary.** The full investigation — every table, the coupling-theory Addendum, the honest record of mistakes made and corrected along the way, and the newest power-of-3 generalization — is in **[README_extra.md](README_extra.md)**, organized into 15 sections + Addendum. This file exists so a new reader isn't faced with 500+ lines up front.
 
 ## Established results (with strength of evidence)
 
@@ -22,13 +22,14 @@ This is not a claim about the Collatz conjecture itself (true/false, cycles, div
 | 8 | The coupling time `tau_couple` is a two-component mixture: an O(1) fast bulk (small residue classes) + a heavy tail scaling ~linearly in bit length (p99 exponent ≈ 0.94) | Independently re-derived, matches original to 2-3 sig figs ([Addendum §5](README_extra.md#5-resolving-the-mismatch-the-distribution-is-a-two-component-mixture), [§11](README_extra.md#11-follow-up-independent-re-verification-of-the-quantile-scaling-mixture-model-5)) |
 | 9 | The phenomenon generalizes to `c=3^p` multipliers: `diff = steps(3^p·m+x) − steps(m)` concentrates on **−p** (mirror image of result #1); combines additively with base 2 (`6^p` gives diff=0); specific to primes 2,3 — other prime powers (5,7,11,13) show no effect | New this session, control-tested, partial proof via merging classes ([§13](README_extra.md#13-new-finding-the-phenomenon-generalizes-to-powers-of-3-answering-the-original-readmes-5-open-question)) |
 | 10 | Result #9's merging-class fraction (like #6/#5b's classical analogue) does not converge to a stable limit as modulus grows; unlike the classical case's near-constant `increment(k)×k`, here it climbs steadily with no sign of flattening in the tested range (k up to 23-25), and p=3 grows measurably faster than p=2 | New this session, pushed to modulus 2^25 (p=2) / 2^23 (p=3) ([§14](README_extra.md#14-follow-up-pushing-13s-merging-class-fraction-to-larger-moduli-does-it-show-the-same-log-type-growth-as-5b)) |
+| 11 | **Whenever a merge happens with fixed parity structure, the diff value is forced to be exactly `L − p` — no other value is possible.** One coefficient-matching argument proves the observed `+L` (#1), `−p` (#9), and `0` (6^p) all at once | **Proved** (elementary; likely known folklore — see caveat); verified on 315 merging classes, 0 violations ([§15](README_extra.md#15-a-proof-that-the-diff-value-is-forced-one-argument-explaining-5a-13-and-the-6p-case)) |
 
 ## Still open
 
-- No closed-form proof that Pr(diff_k = L) → 1 in general (only the alternating family is proved exactly).
+- No closed-form proof that Pr(diff_k = L) → 1 in general (only the alternating family is proved exactly). Note §15 now proves the *value* of diff is forced whenever a merge occurs — what remains open is entirely about the *frequency* of merging, not its value.
 - No precise theoretical derivation of the two-component mixture's parameters (fast/slow split, the ≈bits^0.94 tail exponent) — currently fit, not derived.
 - No proof that zero-exception early-merging holds for *all* n (only verified exhaustively/by sampling to large but finite scales).
-- The −p mechanism for powers of 3 (result #9) is empirically and partially (via merging classes) confirmed but has no closed-form proof analogous to §3's for base 2.
+- ~~The −p mechanism for powers of 3 (result #9) is empirically and partially (via merging classes) confirmed but has no closed-form proof analogous to §3's for base 2.~~ **Resolved by §15** for the *value* of the diff (it is forced to be −p); the frequency question remains open.
 - Whether other an+b Collatz-like maps (not just the standard 3n+1) show analogous effects — untested.
 - The true asymptotic growth of the power-of-3 merging-class fraction (result #10) is unknown — it doesn't match the classical case's near-logarithmic pattern in the tested range, but whether it's a genuinely different growth law or an eventual-flattening transient is unresolved.
 
@@ -36,7 +37,7 @@ This is not a claim about the Collatz conjecture itself (true/false, cycles, div
 
 ```
 README.md                    this summary
-README_extra.md              full write-up (14 sections + Addendum)
+README_extra.md              full write-up (15 sections + Addendum)
 LICENSE                      MIT
 results/                     raw CSV data from §2, §1's single-block run,
                               and §14's power-of-3 merging-class sweep
@@ -50,11 +51,11 @@ general_merging_test.py, large_scale_sampling.c, coupling_experiment3/4/5.py*,
 coupling_scaling.c*, fit_gamma.py*, fast_slow_test.py*, minimal_K_test.py*,
 hypothesis2_test.py*
 
-§10-14 follow-ups (this session's independent re-verification + new findings):
+§10-15 follow-ups (this session's independent re-verification + new findings):
 k_cluster_analysis.py, quantile_scaling_analysis.py, quantile_scaling_large.py,
 coupling_exhaustive_verify.py, base_generalization_test.py, power_of_3_test.py,
 power_of_3_merging_classes.py, power_of_3_merging_classes_fast.py,
-merging_classes_pow3_fast.c
+merging_classes_pow3_fast.c, merge_diff_theorem_verify.py
 
 Unrelated side-quest:
 cycle_search.c               exhaustive Collatz-cycle search, negative result
