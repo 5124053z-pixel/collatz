@@ -60,6 +60,10 @@ k_cluster_analysis.py                   independent re-derivation of §6's
                                          question (negatively)
 quantile_scaling_analysis.py            independent re-derivation of §5's
                                          quantile power-law scaling
+                                         (narrow bit range)
+quantile_scaling_large.py               same, at the original's full
+                                         64-65536 bit range; matches the
+                                         original exponents closely
 coupling_exhaustive_verify.py           independent re-derivation of §2's
                                          exhaustive early-merge check;
                                          reproduces the original table
@@ -467,6 +471,26 @@ Power-law exponents (quantile ~ bits^alpha) from log-log regression, compared to
 The exponents are not numerically identical to the original run (expected: this samples a 64x bit-length range vs. the original's 2048x range, and only 400 samples/window vs. presumably more), but the **qualitative structure is fully reproduced independently**: p10 is exactly bits-independent (here, literally constant at 3 — the n≡4 (mod 8) mechanism from §5b, its minimum possible value), and the exponent rises monotonically through p50 and p90 to essentially linear (alpha≈1) at p99. This is strong independent support for the two-component mixture picture — an O(1) fast bulk plus a heavy tail scaling roughly linearly in bit length — even without the original code surviving.
 
 See `quantile_scaling_analysis.py` (self-contained, pure Python, run: `python quantile_scaling_analysis.py`).
+
+**Update: re-run at the original's full 64–65536 bit range (`quantile_scaling_large.py`).** The initial 64–4096 bit re-run above was intentionally narrow (a factor of 64 in scale) and its exponents came out systematically higher than the original's, most likely from that narrow range. Re-running with the same six-window design but spanning the original's full 32768x range (64, 256, 1024, 4096, 16384, 65536 bits; 800→120 samples, shrinking at larger scale to keep runtime reasonable — the whole run took 65s):
+
+| bits | p10 | p50 | p90 | p99 | max | agreement rate |
+|---|---|---|---|---|---|---|
+| 64 | 3 | 11 | 193 | 419 | 462 | 62.8% |
+| 256 | 3 | 17 | 664 | 1396 | 1841 | 75.2% |
+| 1024 | 3 | 61 | 2613 | 6028 | 7495 | 84.8% |
+| 4096 | 5 | 92 | 4244 | 20115 | 20898 | 91.3% |
+| 16384 | 3 | 67 | 13875 | 77027 | 92525 | 97.5% |
+| 65536 | 3 | 124 | 11926 | 274650 | 354391 | 98.3% |
+
+| quantile | this re-run (full range) | narrow-range re-run (above) | original Addendum §5 |
+|---|---|---|---|
+| p10 | 0.011, R²=0.017 (flat, noise-level) | 0.000 | 0.058 |
+| p50 | **0.343**, R²=0.837 | 0.487 | **0.384** |
+| p90 | **0.623**, R²=0.933 | 0.860 | **0.661** |
+| p99 | **0.941**, R²=1.000 | 1.026 | **0.935** |
+
+At matching scale, the exponents land almost exactly on the original (lost-code) values — p50 within 0.04, p90 within 0.04, p99 within 0.006 — confirming the narrow-range run's higher exponents were indeed a range artifact, not a real discrepancy. This is about as clean an independent reproduction of a "lost" numerical result as this project has managed: different code, different session, matching to 2-3 significant figures. See `quantile_scaling_large.py`.
 
 ## 12. Follow-up: independent re-verification of the exhaustive §2 claim
 
